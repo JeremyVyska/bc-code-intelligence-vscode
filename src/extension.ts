@@ -1,10 +1,13 @@
 import * as vscode from 'vscode';
 import { SpecialistLoaderService } from './services/specialist-loader.js';
+import { initConfigBridge } from './services/config-bridge.js';
 import { registerMcpServerProvider } from './mcp/server-provider.js';
 import { registerChatParticipant } from './chat/participant.js';
 import { registerSpecialistsView, registerPromptsView, registerLayersView } from './views/index.js';
 import { registerCommands } from './commands/index.js';
 import { registerTools } from './tools/index.js';
+import { registerCodeLensProvider } from './codelens/index.js';
+import { registerSetupWizard } from './wizard/index.js';
 
 let outputChannel: vscode.OutputChannel;
 
@@ -13,8 +16,15 @@ export function activate(context: vscode.ExtensionContext): void {
   outputChannel.appendLine('BC Code Intelligence extension activating...');
 
   try {
-    // Initialize specialist loader
-    const specialistLoader = new SpecialistLoaderService(context.extensionPath);
+    // Initialize config bridge early (needed for MCP env vars)
+    initConfigBridge(context);
+    outputChannel.appendLine('Config bridge initialized');
+
+    // Initialize specialist loader with output channel logging
+    const specialistLoader = new SpecialistLoaderService(
+      context.extensionPath,
+      (msg) => outputChannel.appendLine(msg)
+    );
     const specialists = specialistLoader.load();
     outputChannel.appendLine(`Loaded ${specialists.size} specialists`);
 
@@ -48,6 +58,16 @@ export function activate(context: vscode.ExtensionContext): void {
     const tools = registerTools(context);
     context.subscriptions.push(tools);
     outputChannel.appendLine('Language Model Tools registered');
+
+    // Register CodeLens provider for AL files
+    const codeLensProvider = registerCodeLensProvider(context, specialistLoader);
+    context.subscriptions.push(codeLensProvider);
+    outputChannel.appendLine('CodeLens provider registered');
+
+    // Register setup wizard
+    const setupWizard = registerSetupWizard(context);
+    context.subscriptions.push(setupWizard);
+    outputChannel.appendLine('Setup wizard registered');
 
     // Add output channel to subscriptions
     context.subscriptions.push(outputChannel);

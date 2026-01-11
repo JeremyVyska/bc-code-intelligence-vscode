@@ -16,7 +16,7 @@ export function registerCommands(
         label: `${s.emoji} ${s.title.split(' - ')[0]}`,
         description: s.role,
         detail: s.when_to_use[0],
-        specialistId: s.specialist_id,
+        specialist: s,
       }));
 
       const selected = await vscode.window.showQuickPick(items, {
@@ -26,11 +26,10 @@ export function registerCommands(
       });
 
       if (selected) {
-        // Open chat with the selected specialist's mode
-        await vscode.commands.executeCommand(
-          'workbench.action.chat.open',
-          { mode: `bc-code-intelligence.${selected.specialistId}` }
-        );
+        // Open chat with the selected specialist
+        await vscode.commands.executeCommand('workbench.action.chat.open', {
+          query: `@${selected.specialist.specialist_id} `,
+        });
       }
     })
   );
@@ -40,106 +39,48 @@ export function registerCommands(
     vscode.commands.registerCommand(
       'bcCodeIntelligence.activateSpecialist',
       async (specialistId: string) => {
-        await vscode.commands.executeCommand(
-          'workbench.action.chat.open',
-          { mode: `bc-code-intelligence.${specialistId}` }
+        await vscode.commands.executeCommand('workbench.action.chat.open', {
+          query: `@${specialistId} `,
+        });
+      }
+    )
+  );
+
+  // Select prompt command - just opens setup wizard for now
+  // (Workflows are managed by the MCP server, not the extension UI)
+  disposables.push(
+    vscode.commands.registerCommand(
+      'bcCodeIntelligence.selectPrompt',
+      async () => {
+        vscode.window.showInformationMessage(
+          'Workflows are started by asking a specialist in chat. Try: "@roger start a code review"'
         );
       }
     )
   );
 
-  // Select prompt command
-  disposables.push(
-    vscode.commands.registerCommand(
-      'bcCodeIntelligence.selectPrompt',
-      async (promptName?: string) => {
-        if (!promptName) {
-          // Show quick pick for prompts
-          const prompts = [
-            { label: 'Code Optimization', value: 'code_optimization' },
-            { label: 'Architecture Review', value: 'architecture_review' },
-            { label: 'Security Audit', value: 'security_audit' },
-            { label: 'Performance Review', value: 'perf_review' },
-            { label: 'Integration Design', value: 'integration_design' },
-            { label: 'Upgrade Planning', value: 'upgrade_planning' },
-            { label: 'Testing Strategy', value: 'testing_strategy' },
-            { label: 'Developer Onboarding', value: 'dev_onboarding' },
-            { label: 'App Takeover', value: 'app_takeover' },
-            { label: 'Specification Analysis', value: 'spec_analysis' },
-            { label: 'Bug Investigation', value: 'bug_investigation' },
-            { label: 'Monolith to Modules', value: 'monolith_to_modules' },
-            { label: 'Data Flow Tracing', value: 'data_flow_tracing' },
-            { label: 'Full Review', value: 'full_review' },
-          ];
-
-          const selected = await vscode.window.showQuickPick(prompts, {
-            placeHolder: 'Select a workflow prompt...',
-          });
-
-          if (selected) {
-            promptName = selected.value;
-          }
-        }
-
-        if (promptName) {
-          // Insert prompt into chat or start workflow
-          vscode.window.showInformationMessage(
-            `Starting workflow: ${promptName}`
-          );
-          // TODO: Integrate with MCP to start the workflow
-        }
-      }
-    )
-  );
-
-  // Open setup wizard command
-  disposables.push(
-    vscode.commands.registerCommand('bcCodeIntelligence.openSetupWizard', async () => {
-      await vscode.commands.executeCommand(
-        'workbench.action.openSettings',
-        'bcCodeIntelligence.layers'
-      );
-    })
-  );
-
-  // Workflow action command
-  disposables.push(
-    vscode.commands.registerCommand('bcCodeIntelligence.workflowAction', async () => {
-      const actions = [
-        { label: 'Start New Workflow', value: 'start' },
-        { label: 'View Active Workflows', value: 'view' },
-        { label: 'Get Workflow Help', value: 'help' },
-      ];
-
-      const selected = await vscode.window.showQuickPick(actions, {
-        placeHolder: 'Select workflow action...',
-      });
-
-      if (selected) {
-        switch (selected.value) {
-          case 'start':
-            await vscode.commands.executeCommand('bcCodeIntelligence.selectPrompt');
-            break;
-          case 'view':
-            vscode.window.showInformationMessage('No active workflows');
-            break;
-          case 'help':
-            vscode.window.showInformationMessage(
-              'Use the Prompts panel to start a workflow, or ask a specialist for help.'
-            );
-            break;
-        }
-      }
-    })
-  );
+  // Note: openSetupWizard is registered by the wizard module
 
   // Open prompt in editor command
   disposables.push(
     vscode.commands.registerCommand(
       'bcCodeIntelligence.openPromptInEditor',
       async (promptName: string) => {
-        // TODO: Open the prompt file from the MCP submodule
-        vscode.window.showInformationMessage(`Opening prompt: ${promptName}`);
+        // Try to open the prompt file from the MCP submodule
+        const promptsPath = vscode.Uri.joinPath(
+          vscode.Uri.file(context.extensionPath),
+          'bc-code-intelligence-mcp',
+          'embedded-knowledge',
+          'prompts',
+          `${promptName}.md`
+        );
+
+        try {
+          const doc = await vscode.workspace.openTextDocument(promptsPath);
+          await vscode.window.showTextDocument(doc);
+        } catch {
+          vscode.window.showWarningMessage(`Prompt file not found: ${promptName}`);
+        }
       }
     )
   );
@@ -150,33 +91,58 @@ export function registerCommands(
       'bcCodeIntelligence.refreshLayer',
       async (layerType: string) => {
         vscode.window.showInformationMessage(`Refreshing layer: ${layerType}`);
-        // TODO: Call MCP to refresh layer
+        // TODO: Call MCP to refresh layer via reload_layers tool
       }
     )
   );
 
-  // Ask specialist about code command
+  // Ask specialist about code command - enhanced with specialist selection
   disposables.push(
-    vscode.commands.registerCommand('bcCodeIntelligence.askSpecialistAboutCode', async () => {
-      const editor = vscode.window.activeTextEditor;
-      if (!editor) {
-        vscode.window.showWarningMessage('No active editor');
-        return;
+    vscode.commands.registerCommand(
+      'bcCodeIntelligence.askSpecialistAboutCode',
+      async (
+        uri?: vscode.Uri,
+        range?: vscode.Range,
+        specialistId?: string
+      ) => {
+        let codeContext: string;
+
+        if (uri && range) {
+          // Called from CodeLens with specific location
+          const document = await vscode.workspace.openTextDocument(uri);
+          // Get a bit more context around the matched line
+          const startLine = Math.max(0, range.start.line - 2);
+          const endLine = Math.min(document.lineCount - 1, range.start.line + 10);
+          codeContext = document.getText(
+            new vscode.Range(startLine, 0, endLine, document.lineAt(endLine).text.length)
+          );
+        } else {
+          // Called from command palette or context menu
+          const editor = vscode.window.activeTextEditor;
+          if (!editor) {
+            vscode.window.showWarningMessage('No active editor');
+            return;
+          }
+
+          const selection = editor.selection;
+          codeContext = editor.document.getText(selection);
+
+          if (!codeContext) {
+            vscode.window.showWarningMessage('No code selected');
+            return;
+          }
+        }
+
+        // Open chat with the selected code as context
+        const query = specialistId
+          ? `@${specialistId} Please analyze this code:\n\n\`\`\`\n${codeContext}\n\`\`\``
+          : `Please analyze this code:\n\n\`\`\`\n${codeContext}\n\`\`\``;
+
+        await vscode.commands.executeCommand('workbench.action.chat.open', {
+          query,
+        });
       }
-
-      const selection = editor.selection;
-      const selectedText = editor.document.getText(selection);
-
-      if (!selectedText) {
-        vscode.window.showWarningMessage('No code selected');
-        return;
-      }
-
-      // Open chat with the selected code as context
-      await vscode.commands.executeCommand('workbench.action.chat.open', {
-        query: `Please analyze this code:\n\n\`\`\`\n${selectedText}\n\`\`\``,
-      });
-    })
+    )
   );
 
   return vscode.Disposable.from(...disposables);

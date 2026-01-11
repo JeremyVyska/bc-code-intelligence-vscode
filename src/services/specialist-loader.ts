@@ -27,23 +27,28 @@ export function parseSpecialistFile(filePath: string): SpecialistDefinition {
 /**
  * Loads all specialist definitions from a directory
  */
-export function loadSpecialistsFromDirectory(specialistsDir: string): SpecialistRegistry {
+export function loadSpecialistsFromDirectory(specialistsDir: string, log?: (msg: string) => void): SpecialistRegistry {
   const registry: SpecialistRegistry = new Map();
+  const logFn = log || console.log;
+
+  logFn(`Looking for specialists in: ${specialistsDir}`);
 
   if (!fs.existsSync(specialistsDir)) {
-    console.warn(`Specialists directory not found: ${specialistsDir}`);
+    logFn(`ERROR: Specialists directory not found: ${specialistsDir}`);
     return registry;
   }
 
   const files = fs.readdirSync(specialistsDir).filter((f) => f.endsWith('.md'));
+  logFn(`Found ${files.length} specialist files: ${files.join(', ')}`);
 
   for (const file of files) {
     try {
       const filePath = path.join(specialistsDir, file);
       const specialist = parseSpecialistFile(filePath);
       registry.set(specialist.specialist_id, specialist);
+      logFn(`Loaded specialist: ${specialist.specialist_id}`);
     } catch (error) {
-      console.error(`Failed to parse specialist file ${file}:`, error);
+      logFn(`ERROR: Failed to parse specialist file ${file}: ${error}`);
     }
   }
 
@@ -68,9 +73,12 @@ export function getEmbeddedSpecialistsPath(extensionPath: string): string {
 export class SpecialistLoaderService {
   private registry: SpecialistRegistry = new Map();
   private extensionPath: string;
+  private logFn: (msg: string) => void;
 
-  constructor(extensionPath: string) {
+  constructor(extensionPath: string, logFn?: (msg: string) => void) {
     this.extensionPath = extensionPath;
+    this.logFn = logFn || console.log;
+    this.logFn(`SpecialistLoaderService initialized with extension path: ${extensionPath}`);
   }
 
   /**
@@ -78,7 +86,9 @@ export class SpecialistLoaderService {
    */
   load(): SpecialistRegistry {
     const specialistsPath = getEmbeddedSpecialistsPath(this.extensionPath);
-    this.registry = loadSpecialistsFromDirectory(specialistsPath);
+    this.logFn(`Loading specialists from: ${specialistsPath}`);
+    this.registry = loadSpecialistsFromDirectory(specialistsPath, this.logFn);
+    this.logFn(`Total specialists loaded: ${this.registry.size}`);
     return this.registry;
   }
 

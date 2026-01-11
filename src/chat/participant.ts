@@ -2,42 +2,52 @@ import * as vscode from 'vscode';
 import type { SpecialistLoaderService } from '../services/specialist-loader.js';
 import type { SpecialistDefinition } from '../types/index.js';
 
-const PARTICIPANT_ID = 'bc-code-intelligence';
+const PARTICIPANT_PREFIX = 'bc-code-intelligence.';
 const MAX_TOOL_ITERATIONS = 10;
 const TOOL_PREFIX = 'bc-code-intelligence_';
 
 /**
- * Creates and registers the BC Code Intelligence chat participant
+ * Creates and registers chat participants for all specialists
  */
 export function registerChatParticipant(
   context: vscode.ExtensionContext,
   specialistLoader: SpecialistLoaderService,
   outputChannel: vscode.OutputChannel
 ): vscode.Disposable {
-  const participant = vscode.chat.createChatParticipant(
-    PARTICIPANT_ID,
-    (request, chatContext, stream, token) =>
-      handleChatRequest(request, chatContext, stream, token, specialistLoader, outputChannel)
-  );
+  const disposables: vscode.Disposable[] = [];
 
-  participant.iconPath = vscode.Uri.joinPath(context.extensionUri, 'resources', 'bc-icon.svg');
-
-  outputChannel.appendLine(`Chat participant @${PARTICIPANT_ID} registered`);
-
-  return participant;
-}
-
-/**
- * Gets the active specialist based on the chat mode
- */
-function getActiveSpecialist(
-  request: vscode.ChatRequest,
-  specialistLoader: SpecialistLoaderService
-): SpecialistDefinition | undefined {
-  // TODO: Detect chat mode from request when VSCode API supports it
-  // For now, default to sam-coder
+  // Get all specialists and register a participant for each
   const specialists = specialistLoader.getAll();
-  return specialistLoader.get('sam-coder') || specialists[0];
+  outputChannel.appendLine(`[ChatParticipant] getAll() returned ${specialists.length} specialists`);
+
+  if (specialists.length === 0) {
+    outputChannel.appendLine(`[ChatParticipant] WARNING: No specialists loaded - chat participants will not be available`);
+    return vscode.Disposable.from(...disposables);
+  }
+
+  for (const specialist of specialists) {
+    const participantId = `${PARTICIPANT_PREFIX}${specialist.specialist_id}`;
+    outputChannel.appendLine(`[ChatParticipant] Registering participant: ${participantId}`);
+
+    try {
+      const participant = vscode.chat.createChatParticipant(
+        participantId,
+        (request, chatContext, stream, token) =>
+          handleChatRequest(request, chatContext, stream, token, specialist, specialistLoader, outputChannel)
+      );
+
+      participant.iconPath = vscode.Uri.joinPath(context.extensionUri, 'resources', 'bc-icon.svg');
+
+      disposables.push(participant);
+      outputChannel.appendLine(`[ChatParticipant] ✓ @${specialist.specialist_id} registered successfully`);
+    } catch (error) {
+      outputChannel.appendLine(`[ChatParticipant] ✗ Failed to register @${specialist.specialist_id}: ${error}`);
+    }
+  }
+
+  outputChannel.appendLine(`[ChatParticipant] Total registered: ${disposables.length} specialist chat participants`);
+
+  return vscode.Disposable.from(...disposables);
 }
 
 /**
@@ -62,7 +72,7 @@ ${specialist.when_to_use.map(use => `- ${use}`).join('\n')}
 
 ## Collaboration
 When a question falls outside your expertise, suggest consulting:
-${specialist.collaboration.natural_handoffs.map(id => `- ${id}`).join('\n')}
+${specialist.collaboration.natural_handoffs.map(id => `- @${id}`).join('\n')}
 
 ## Available Tools
 You have access to BC Code Intelligence MCP tools. Use them to:
@@ -86,26 +96,19 @@ function getBCIntelTools(): vscode.LanguageModelToolInformation[] {
 }
 
 /**
- * Handles incoming chat requests
+ * Handles incoming chat requests for a specific specialist
  */
 async function handleChatRequest(
   request: vscode.ChatRequest,
   chatContext: vscode.ChatContext,
   stream: vscode.ChatResponseStream,
   token: vscode.CancellationToken,
+  specialist: SpecialistDefinition,
   specialistLoader: SpecialistLoaderService,
   outputChannel: vscode.OutputChannel
 ): Promise<void> {
-  outputChannel.appendLine(`[@${PARTICIPANT_ID}] User query: ${request.prompt}`);
-
-  const specialist = getActiveSpecialist(request, specialistLoader);
-
-  if (!specialist) {
-    stream.markdown('⚠️ No specialist available. Please ensure the BC Code Intelligence extension is properly configured.');
-    return;
-  }
-
-  outputChannel.appendLine(`[@${PARTICIPANT_ID}] Active specialist: ${specialist.title}`);
+  outputChannel.appendLine(`[@${specialist.specialist_id}] User query: ${request.prompt}`);
+  outputChannel.appendLine(`[@${specialist.specialist_id}] Active specialist: ${specialist.title}`);
 
   // Build conversation messages with system prompt
   const messages: vscode.LanguageModelChatMessage[] = [
@@ -137,26 +140,41 @@ async function handleChatRequest(
   messages.push(vscode.LanguageModelChatMessage.User(request.prompt));
 
   try {
-    // Get available models
-    const models = await vscode.lm.selectChatModels({
+    // Get available models - try copilot vendor first, then any available model
+    let models = await vscode.lm.selectChatModels({
       vendor: 'copilot',
-      family: 'gpt-4',
     });
 
+    // If no copilot models, try to get any available model
     if (models.length === 0) {
-      stream.markdown('⚠️ No GitHub Copilot model available. Please ensure GitHub Copilot is enabled.');
+      outputChannel.appendLine(`[@${specialist.specialist_id}] No copilot models found, trying all available models`);
+      models = await vscode.lm.selectChatModels({});
+    }
+
+    if (models.length === 0) {
+      outputChannel.appendLine(`[@${specialist.specialist_id}] ERROR: No language models available`);
+      stream.markdown('⚠️ No language model available. Please ensure GitHub Copilot is enabled and you are signed in.');
       return;
     }
 
-    const model = models[0];
-    outputChannel.appendLine(`[@${PARTICIPANT_ID}] Using model: ${model.name}`);
+    // Log available models for debugging
+    outputChannel.appendLine(`[@${specialist.specialist_id}] Available models: ${models.map(m => `${m.name} (${m.family})`).join(', ')}`);
+
+    // Prefer Claude Sonnet 4.5, then GPT-4 family, then any Claude, then first available
+    const model =
+      models.find(m => m.name.toLowerCase().includes('claude') && m.name.includes('sonnet')) ||
+      models.find(m => m.family.includes('gpt-4o')) ||
+      models.find(m => m.family.includes('gpt-4')) ||
+      models.find(m => m.name.toLowerCase().includes('claude')) ||
+      models[0];
+    outputChannel.appendLine(`[@${specialist.specialist_id}] Using model: ${model.name}`);
 
     // Get available BC Code Intelligence tools
     const bcTools = getBCIntelTools();
-    outputChannel.appendLine(`[@${PARTICIPANT_ID}] BC tools found: ${bcTools.length}`);
+    outputChannel.appendLine(`[@${specialist.specialist_id}] BC tools found: ${bcTools.length}`);
 
     if (bcTools.length > 0) {
-      outputChannel.appendLine(`[@${PARTICIPANT_ID}] Tool names: ${bcTools.map(t => t.name).join(', ')}`);
+      outputChannel.appendLine(`[@${specialist.specialist_id}] Tool names: ${bcTools.map(t => t.name).join(', ')}`);
     }
 
     // Map tools to format expected by model
@@ -200,7 +218,7 @@ async function handleChatRequest(
       const toolResultParts: vscode.LanguageModelToolResultPart[] = [];
 
       for (const toolCall of toolCalls) {
-        outputChannel.appendLine(`[@${PARTICIPANT_ID}] Tool call: ${toolCall.name} (callId: ${toolCall.callId})`);
+        outputChannel.appendLine(`[@${specialist.specialist_id}] Tool call: ${toolCall.name} (callId: ${toolCall.callId})`);
         stream.progress(`Using tool: ${toolCall.name}...`);
 
         try {
@@ -213,7 +231,7 @@ async function handleChatRequest(
             token
           );
 
-          outputChannel.appendLine(`[@${PARTICIPANT_ID}] Tool result received (${toolResult.content.length} parts)`);
+          outputChannel.appendLine(`[@${specialist.specialist_id}] Tool result received (${toolResult.content.length} parts)`);
 
           assistantToolCalls.push(toolCall);
           toolResultParts.push(new vscode.LanguageModelToolResultPart(
@@ -222,7 +240,7 @@ async function handleChatRequest(
           ));
         } catch (toolError: unknown) {
           const errorMessage = toolError instanceof Error ? toolError.message : String(toolError);
-          outputChannel.appendLine(`[@${PARTICIPANT_ID}] Tool error: ${errorMessage}`);
+          outputChannel.appendLine(`[@${specialist.specialist_id}] Tool error: ${errorMessage}`);
           stream.markdown(`\n\n⚠️ Tool ${toolCall.name} failed: ${errorMessage}\n\n`);
 
           // Still provide a response for this tool call
@@ -249,15 +267,15 @@ async function handleChatRequest(
     }
 
     if (iteration >= MAX_TOOL_ITERATIONS) {
-      outputChannel.appendLine(`[@${PARTICIPANT_ID}] Warning: Reached max tool iterations`);
+      outputChannel.appendLine(`[@${specialist.specialist_id}] Warning: Reached max tool iterations`);
       stream.markdown('\n\n_Note: Reached maximum tool calling iterations._');
     }
 
-    outputChannel.appendLine(`[@${PARTICIPANT_ID}] Response complete (${iteration} iterations)`);
+    outputChannel.appendLine(`[@${specialist.specialist_id}] Response complete (${iteration} iterations)`);
 
   } catch (error: unknown) {
     const errorMessage = error instanceof Error ? error.message : String(error);
-    outputChannel.appendLine(`[@${PARTICIPANT_ID}] Error: ${errorMessage}`);
+    outputChannel.appendLine(`[@${specialist.specialist_id}] Error: ${errorMessage}`);
 
     if (error instanceof vscode.LanguageModelError) {
       stream.markdown(`⚠️ Language model error: ${errorMessage}`);

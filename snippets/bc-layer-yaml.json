@@ -1,0 +1,51 @@
+{
+  "BC CodeLens Mapping": {
+    "prefix": "tcodelens",
+    "description": "CodeLens pattern-to-specialist mapping entry",
+    "body": [
+      "  - pattern: \"${1:\\\\\\\\bError\\\\\\\\s*\\\\\\\\(}\"",
+      "    specialist: ${2:eva-errors}",
+      "    label: \"${3:Ask Eva about ErrorInfo}\""
+    ]
+  },
+
+  "BC Layer Config": {
+    "prefix": "tlayerconfig",
+    "description": "Layer configuration file content",
+    "body": [
+      "name: ${1:Layer Name}",
+      "type: ${2|company,team,project|}",
+      "priority: ${3:20}",
+      "description: ${4:Description of this knowledge layer}",
+      "version: ${5:1.0.0}"
+    ]
+  },
+
+  "BC CodeLens Mappings File": {
+    "prefix": "tcodelens-file",
+    "description": "Full CodeLens mappings YAML file",
+    "body": [
+      "# CodeLens pattern-to-specialist mappings",
+      "# Patterns are JavaScript regular expressions",
+      "# Specialists must match specialist_id from specialist definitions",
+      "",
+      "mappings:",
+      "  - pattern: \"\\\\\\\\bError\\\\\\\\s*\\\\\\\\(\"",
+      "    specialist: eva-errors",
+      "    label: \"Ask Eva about ErrorInfo\"",
+      "",
+      "  - pattern: \"${1:pattern}\"",
+      "    specialist: ${2:specialist-id}",
+      "    label: \"${3:Label text}\"",
+      ""
+    ]
+  },
+
+  "BC Specialist Reference": {
+    "prefix": "tspecialist-ref",
+    "description": "Reference a specialist in YAML",
+    "body": [
+      "specialist: \"${1|sam-coder,alex-architect,dean-debug,eva-errors,quinn-tester,roger-reviewer,seth-security,jordan-bridge,logan-legacy,uma-ux,morgan-market,maya-mentor,taylor-docs,casey-copilot,parker-pragmatic,chris-config|}\""
+    ]
+  }
+}

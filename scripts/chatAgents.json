@@ -1,0 +1,82 @@
+[
+  {
+    "name": "Alex-Architect",
+    "path": "./assets/agents/Alex-Architect.agent.md",
+    "description": "Alex Architect - Solution Design & Requirements Expert - Planning & Design"
+  },
+  {
+    "name": "Casey-Copilot",
+    "path": "./assets/agents/Casey-Copilot.agent.md",
+    "description": "Casey Copilot - AI-Enhanced Development Coach - AI Enhancement Specialist"
+  },
+  {
+    "name": "Chris-Config",
+    "path": "./assets/agents/Chris-Config.agent.md",
+    "description": "Chris Config - MCP Configuration & Layer Management - Configuration & Infrastructure"
+  },
+  {
+    "name": "Dean-Debug",
+    "path": "./assets/agents/Dean-Debug.agent.md",
+    "description": "Dean Debug - Performance & Troubleshooting Specialist - Troubleshooting"
+  },
+  {
+    "name": "Eva-Errors",
+    "path": "./assets/agents/Eva-Errors.agent.md",
+    "description": "Eva Errors - Error Handling & Exception Management - Error Prevention Architect"
+  },
+  {
+    "name": "Jordan-Bridge",
+    "path": "./assets/agents/Jordan-Bridge.agent.md",
+    "description": "Jordan Bridge - Integration & Extensibility Architect - Integration & Events"
+  },
+  {
+    "name": "Logan-Legacy",
+    "path": "./assets/agents/Logan-Legacy.agent.md",
+    "description": "Logan Legacy - Code Archaeology & System Analysis - Code Analysis"
+  },
+  {
+    "name": "Maya-Mentor",
+    "path": "./assets/agents/Maya-Mentor.agent.md",
+    "description": "Maya Mentor - Teaching-Focused Development Guide - Teaching Development"
+  },
+  {
+    "name": "Morgan-Market",
+    "path": "./assets/agents/Morgan-Market.agent.md",
+    "description": "Morgan Market - AppSource & ISV Business Expert - Business Strategy Architect"
+  },
+  {
+    "name": "Parker-Pragmatic",
+    "path": "./assets/agents/Parker-Pragmatic.agent.md",
+    "description": "Parker Pragmatic - AI Trust & Transparency Specialist - AI Trust Builder"
+  },
+  {
+    "name": "Quinn-Tester",
+    "path": "./assets/agents/Quinn-Tester.agent.md",
+    "description": "Quinn Tester - Testing Strategy & Validation Expert - Testing Strategy"
+  },
+  {
+    "name": "Roger-Reviewer",
+    "path": "./assets/agents/Roger-Reviewer.agent.md",
+    "description": "Roger Reviewer - Code Quality & Standards Guardian - Quality Assurance"
+  },
+  {
+    "name": "Sam-Coder",
+    "path": "./assets/agents/Sam-Coder.agent.md",
+    "description": "Sam Coder - Expert Development Specialist - Expert Development"
+  },
+  {
+    "name": "Seth-Security",
+    "path": "./assets/agents/Seth-Security.agent.md",
+    "description": "Seth Security - Security & Permission Management - Security Architecture Expert"
+  },
+  {
+    "name": "Taylor-Docs",
+    "path": "./assets/agents/Taylor-Docs.agent.md",
+    "description": "Taylor Docs - Documentation & Knowledge Management - Documentation Architect"
+  },
+  {
+    "name": "Uma-Ux",
+    "path": "./assets/agents/Uma-Ux.agent.md",
+    "description": "Uma UX - User Experience & Interface Design - User Experience Architect"
+  }
+]

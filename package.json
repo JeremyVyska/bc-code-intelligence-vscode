@@ -33,92 +33,116 @@
   "contributes": {
     "chatParticipants": [
       {
-        "id": "bc-code-intelligence",
-        "name": "BC Code Intelligence",
-        "description": "Business Central development assistant with specialist personas",
-        "isSticky": true
-      }
-    ],
-    "chatModes": [
-      {
         "id": "bc-code-intelligence.sam-coder",
-        "name": "Sam Coder",
-        "description": "Expert BC/AL development and implementation specialist"
+        "name": "sam-coder",
+        "fullName": "Sam Coder",
+        "description": "Expert BC/AL development and implementation specialist",
+        "isSticky": true
       },
       {
         "id": "bc-code-intelligence.alex-architect",
-        "name": "Alex Architect",
-        "description": "Architecture and design specialist for BC solutions"
+        "name": "alex-architect",
+        "fullName": "Alex Architect",
+        "description": "Architecture and design specialist for BC solutions",
+        "isSticky": true
       },
       {
         "id": "bc-code-intelligence.dean-debug",
-        "name": "Dean Debug",
-        "description": "Debugging and performance optimization specialist"
+        "name": "dean-debug",
+        "fullName": "Dean Debug",
+        "description": "Debugging and performance optimization specialist",
+        "isSticky": true
       },
       {
         "id": "bc-code-intelligence.eva-errors",
-        "name": "Eva Errors",
-        "description": "Error handling and exception management specialist"
+        "name": "eva-errors",
+        "fullName": "Eva Errors",
+        "description": "Error handling and exception management specialist",
+        "isSticky": true
       },
       {
         "id": "bc-code-intelligence.quinn-tester",
-        "name": "Quinn Tester",
-        "description": "Testing and quality assurance specialist"
+        "name": "quinn-tester",
+        "fullName": "Quinn Tester",
+        "description": "Testing and quality assurance specialist",
+        "isSticky": true
       },
       {
         "id": "bc-code-intelligence.roger-reviewer",
-        "name": "Roger Reviewer",
-        "description": "Code review specialist"
+        "name": "roger-reviewer",
+        "fullName": "Roger Reviewer",
+        "description": "Code review specialist",
+        "isSticky": true
       },
       {
         "id": "bc-code-intelligence.seth-security",
-        "name": "Seth Security",
-        "description": "Security specialist for BC applications"
+        "name": "seth-security",
+        "fullName": "Seth Security",
+        "description": "Security specialist for BC applications",
+        "isSticky": true
       },
       {
         "id": "bc-code-intelligence.jordan-bridge",
-        "name": "Jordan Bridge",
-        "description": "Integration and events specialist"
+        "name": "jordan-bridge",
+        "fullName": "Jordan Bridge",
+        "description": "Integration and events specialist",
+        "isSticky": true
       },
       {
         "id": "bc-code-intelligence.logan-legacy",
-        "name": "Logan Legacy",
-        "description": "Legacy code and upgrade specialist"
+        "name": "logan-legacy",
+        "fullName": "Logan Legacy",
+        "description": "Legacy code and upgrade specialist",
+        "isSticky": true
       },
       {
         "id": "bc-code-intelligence.uma-ux",
-        "name": "Uma UX",
-        "description": "User experience specialist for BC"
+        "name": "uma-ux",
+        "fullName": "Uma UX",
+        "description": "User experience specialist for BC",
+        "isSticky": true
       },
       {
         "id": "bc-code-intelligence.morgan-market",
-        "name": "Morgan Market",
-        "description": "AppSource and ISV specialist"
+        "name": "morgan-market",
+        "fullName": "Morgan Market",
+        "description": "AppSource and ISV specialist",
+        "isSticky": true
       },
       {
         "id": "bc-code-intelligence.maya-mentor",
-        "name": "Maya Mentor",
-        "description": "Mentoring and learning specialist"
+        "name": "maya-mentor",
+        "fullName": "Maya Mentor",
+        "description": "Mentoring and learning specialist",
+        "isSticky": true
       },
       {
         "id": "bc-code-intelligence.taylor-docs",
-        "name": "Taylor Docs",
-        "description": "Documentation specialist"
+        "name": "taylor-docs",
+        "fullName": "Taylor Docs",
+        "description": "Documentation specialist",
+        "isSticky": true
       },
       {
         "id": "bc-code-intelligence.casey-copilot",
-        "name": "Casey Copilot",
-        "description": "AI-assisted development specialist"
+        "name": "casey-copilot",
+        "fullName": "Casey Copilot",
+        "description": "AI-assisted development specialist",
+        "isSticky": true
       },
       {
         "id": "bc-code-intelligence.parker-pragmatic",
-        "name": "Parker Pragmatic",
-        "description": "AI trust and transparency meta-specialist"
+        "name": "parker-pragmatic",
+        "fullName": "Parker Pragmatic",
+        "description": "AI trust and transparency meta-specialist",
+        "isSticky": true
       },
       {
         "id": "bc-code-intelligence.chris-config",
-        "name": "Chris Config",
-        "description": "MCP configuration specialist"
+        "name": "chris-config",
+        "fullName": "Chris Config",
+        "description": "MCP configuration specialist",
+        "isSticky": true
       }
     ],
     "commands": [
@@ -179,6 +203,11 @@
         "title": "Refresh Layers",
         "category": "BC Code Intelligence",
         "icon": "$(refresh)"
+      },
+      {
+        "command": "bcCodeIntelligence.installChatmodes",
+        "title": "Install Specialist Chat Modes",
+        "category": "BC Code Intelligence"
       }
     ],
     "configuration": {
@@ -388,15 +417,358 @@
         "id": "bc-code-intelligence",
         "label": "BC Code Intelligence MCP Server"
       }
+    ],
+    "chatAgents": [
+      {
+        "name": "Sam-Coder",
+        "path": "./assets/agents/Sam-Coder.agent.md",
+        "description": "Expert BC/AL development - focused implementation with knowledge validation"
+      },
+      {
+        "name": "Alex-Architect",
+        "path": "./assets/agents/Alex-Architect.agent.md",
+        "description": "Solution design & requirements - planning, architecture, and design patterns"
+      },
+      {
+        "name": "Dean-Debug",
+        "path": "./assets/agents/Dean-Debug.agent.md",
+        "description": "Performance & troubleshooting - systematic debugging and optimization"
+      },
+      {
+        "name": "Eva-Errors",
+        "path": "./assets/agents/Eva-Errors.agent.md",
+        "description": "Error handling & exceptions - resilient code and error prevention"
+      },
+      {
+        "name": "Quinn-Tester",
+        "path": "./assets/agents/Quinn-Tester.agent.md",
+        "description": "Testing strategy & validation - test coverage and quality assurance"
+      },
+      {
+        "name": "Roger-Reviewer",
+        "path": "./assets/agents/Roger-Reviewer.agent.md",
+        "description": "Code quality & standards - code review and best practices"
+      },
+      {
+        "name": "Seth-Security",
+        "path": "./assets/agents/Seth-Security.agent.md",
+        "description": "Security & permissions - BC security architecture and data protection"
+      },
+      {
+        "name": "Jordan-Bridge",
+        "path": "./assets/agents/Jordan-Bridge.agent.md",
+        "description": "Integration & extensibility - APIs, events, and external connections"
+      },
+      {
+        "name": "Logan-Legacy",
+        "path": "./assets/agents/Logan-Legacy.agent.md",
+        "description": "Code archaeology & analysis - understanding existing systems and upgrades"
+      },
+      {
+        "name": "Uma-Ux",
+        "path": "./assets/agents/Uma-Ux.agent.md",
+        "description": "User experience & interface - BC page design and usability"
+      },
+      {
+        "name": "Morgan-Market",
+        "path": "./assets/agents/Morgan-Market.agent.md",
+        "description": "AppSource & ISV business - marketplace strategy and certification"
+      },
+      {
+        "name": "Maya-Mentor",
+        "path": "./assets/agents/Maya-Mentor.agent.md",
+        "description": "Teaching & learning - BC development education and onboarding"
+      },
+      {
+        "name": "Taylor-Docs",
+        "path": "./assets/agents/Taylor-Docs.agent.md",
+        "description": "Documentation & knowledge - technical writing and help content"
+      },
+      {
+        "name": "Casey-Copilot",
+        "path": "./assets/agents/Casey-Copilot.agent.md",
+        "description": "AI-enhanced development - leveraging AI tools effectively in BC"
+      },
+      {
+        "name": "Parker-Pragmatic",
+        "path": "./assets/agents/Parker-Pragmatic.agent.md",
+        "description": "AI trust & transparency - understanding AI limitations and verification"
+      },
+      {
+        "name": "Chris-Config",
+        "path": "./assets/agents/Chris-Config.agent.md",
+        "description": "MCP configuration & layers - setting up knowledge layers and config"
+      }
+    ],
+    "snippets": [
+      {
+        "language": "markdown",
+        "path": "./snippets/bc-layer-content.json"
+      },
+      {
+        "language": "yaml",
+        "path": "./snippets/bc-layer-yaml.json"
+      }
+    ],
+    "languageModelTools": [
+      {
+        "name": "bc-code-intelligence_findKnowledge",
+        "displayName": "Find BC Knowledge",
+        "modelDescription": "Search the Business Central knowledge base for topics, specialists, workflows, and best practices. Use this to find relevant BC development guidance.",
+        "toolReferenceName": "findKnowledge",
+        "icon": "$(search)",
+        "tags": ["bc", "business-central", "knowledge", "search"],
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "query": { "type": "string", "description": "Search query for BC knowledge" },
+            "search_type": { "type": "string", "description": "Type of content to search", "enum": ["topics", "specialists", "workflows", "all"], "default": "all" },
+            "limit": { "type": "number", "description": "Maximum results to return", "default": 10 }
+          },
+          "required": ["query"]
+        }
+      },
+      {
+        "name": "bc-code-intelligence_getTopic",
+        "displayName": "Get BC Topic",
+        "modelDescription": "Retrieve detailed content for a specific Business Central knowledge topic, including code samples and best practices.",
+        "toolReferenceName": "getTopic",
+        "icon": "$(book)",
+        "tags": ["bc", "business-central", "knowledge", "topic"],
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "topic_id": { "type": "string", "description": "The topic ID to retrieve" },
+            "include_samples": { "type": "boolean", "description": "Include code samples in response", "default": true }
+          },
+          "required": ["topic_id"]
+        }
+      },
+      {
+        "name": "bc-code-intelligence_askExpert",
+        "displayName": "Ask BC Expert",
+        "modelDescription": "Consult a BC specialist for expert guidance. Specialists include Sam Coder (development), Alex Architect (architecture), Dean Debug (debugging), Quinn Tester (testing), and more.",
+        "toolReferenceName": "askExpert",
+        "icon": "$(comment-discussion)",
+        "tags": ["bc", "business-central", "expert", "specialist"],
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "question": { "type": "string", "description": "Question for the specialist" },
+            "context": { "type": "string", "description": "Additional context about your situation" },
+            "preferred_specialist": { "type": "string", "description": "Preferred specialist ID (e.g., sam-coder, alex-architect)" },
+            "autonomous_mode": { "type": "boolean", "description": "Allow specialist to work autonomously", "default": false }
+          },
+          "required": ["question"]
+        }
+      },
+      {
+        "name": "bc-code-intelligence_analyzeCode",
+        "displayName": "Analyze AL Code",
+        "modelDescription": "Analyze AL (Business Central) code for performance issues, quality concerns, security vulnerabilities, or pattern compliance.",
+        "toolReferenceName": "analyzeCode",
+        "icon": "$(microscope)",
+        "tags": ["bc", "business-central", "al", "analysis", "code-review"],
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "code": { "type": "string", "description": "AL code to analyze" },
+            "analysis_type": { "type": "string", "description": "Type of analysis to perform", "enum": ["performance", "quality", "security", "patterns", "comprehensive"], "default": "comprehensive" },
+            "operation": { "type": "string", "description": "Specific operation context (e.g., insert, modify, delete)" }
+          },
+          "required": ["code"]
+        }
+      },
+      {
+        "name": "bc-code-intelligence_startWorkflow",
+        "displayName": "Start BC Workflow",
+        "modelDescription": "Start a multi-phase workflow for complex BC development tasks like architecture review, security audit, or upgrade planning.",
+        "toolReferenceName": "startWorkflow",
+        "icon": "$(rocket)",
+        "tags": ["bc", "business-central", "workflow"],
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "workflow_type": { "type": "string", "description": "Type of workflow to start", "enum": ["code_optimization", "architecture_review", "security_audit", "perf_review", "integration_design", "upgrade_planning", "testing_strategy", "dev_onboarding", "app_takeover", "spec_analysis", "bug_investigation", "monolith_to_modules", "data_flow_tracing", "full_review"] },
+            "context": { "type": "string", "description": "Context for the workflow" },
+            "execution_mode": { "type": "string", "description": "Execution mode", "enum": ["guided", "autonomous"], "default": "guided" }
+          },
+          "required": ["workflow_type"]
+        }
+      },
+      {
+        "name": "bc-code-intelligence_advanceWorkflow",
+        "displayName": "Advance Workflow",
+        "modelDescription": "Advance a running workflow to its next phase, providing results from the current phase.",
+        "toolReferenceName": "advanceWorkflow",
+        "icon": "$(arrow-right)",
+        "tags": ["bc", "business-central", "workflow"],
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "workflow_id": { "type": "string", "description": "ID of the workflow to advance" },
+            "phase_results": { "type": "string", "description": "Results from the current phase" },
+            "next_focus": { "type": "string", "description": "Specific focus for the next phase" }
+          },
+          "required": ["workflow_id"]
+        }
+      },
+      {
+        "name": "bc-code-intelligence_getWorkflowHelp",
+        "displayName": "Get Workflow Help",
+        "modelDescription": "Get guidance, status, or next steps for a running workflow.",
+        "toolReferenceName": "getWorkflowHelp",
+        "icon": "$(question)",
+        "tags": ["bc", "business-central", "workflow", "help"],
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "workflow_id": { "type": "string", "description": "ID of the workflow" },
+            "help_type": { "type": "string", "description": "Type of help needed", "enum": ["status", "guidance", "next-steps", "methodology"], "default": "guidance" }
+          },
+          "required": ["workflow_id"]
+        }
+      },
+      {
+        "name": "bc-code-intelligence_listSpecialists",
+        "displayName": "List Specialists",
+        "modelDescription": "List available BC development specialists, optionally filtered by domain or expertise.",
+        "toolReferenceName": "listSpecialists",
+        "icon": "$(organization)",
+        "tags": ["bc", "business-central", "specialists"],
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "domain": { "type": "string", "description": "Filter by domain (e.g., development, testing, security)" },
+            "expertise": { "type": "string", "description": "Filter by expertise area" }
+          }
+        }
+      },
+      {
+        "name": "bc-code-intelligence_setWorkspaceInfo",
+        "displayName": "Set Workspace Info",
+        "modelDescription": "Set the workspace root and available MCP servers for context-aware assistance.",
+        "toolReferenceName": "setWorkspaceInfo",
+        "icon": "$(folder)",
+        "tags": ["bc", "business-central", "workspace", "config"],
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "workspace_root": { "type": "string", "description": "Path to workspace root" },
+            "available_mcps": { "type": "string", "description": "JSON array of available MCP server names" }
+          },
+          "required": ["workspace_root"]
+        }
+      },
+      {
+        "name": "bc-code-intelligence_getWorkspaceInfo",
+        "displayName": "Get Workspace Info",
+        "modelDescription": "Retrieve the current workspace context and configuration.",
+        "toolReferenceName": "getWorkspaceInfo",
+        "icon": "$(info)",
+        "tags": ["bc", "business-central", "workspace"],
+        "inputSchema": {
+          "type": "object",
+          "properties": {}
+        }
+      },
+      {
+        "name": "bc-code-intelligence_diagnoseGitLayer",
+        "displayName": "Diagnose Git Layer",
+        "modelDescription": "Diagnose issues with Git-based knowledge layers.",
+        "toolReferenceName": "diagnoseGitLayer",
+        "icon": "$(git-branch)",
+        "tags": ["bc", "diagnostic", "git"],
+        "when": "config.bcCodeIntelligence.developer.enableDiagnosticTools",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "layer_name": { "type": "string", "description": "Name of the layer to diagnose" }
+          },
+          "required": ["layer_name"]
+        }
+      },
+      {
+        "name": "bc-code-intelligence_validateLayerConfig",
+        "displayName": "Validate Layer Config",
+        "modelDescription": "Validate the configuration of knowledge layers.",
+        "toolReferenceName": "validateLayerConfig",
+        "icon": "$(check)",
+        "tags": ["bc", "diagnostic", "config"],
+        "when": "config.bcCodeIntelligence.developer.enableDiagnosticTools",
+        "inputSchema": {
+          "type": "object",
+          "properties": {}
+        }
+      },
+      {
+        "name": "bc-code-intelligence_testAzureDevOpsPat",
+        "displayName": "Test Azure DevOps PAT",
+        "modelDescription": "Test if an Azure DevOps Personal Access Token is valid.",
+        "toolReferenceName": "testAzureDevOpsPat",
+        "icon": "$(key)",
+        "tags": ["bc", "diagnostic", "azure-devops", "auth"],
+        "when": "config.bcCodeIntelligence.developer.enableDiagnosticTools",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "organization": { "type": "string", "description": "Azure DevOps organization name" }
+          },
+          "required": ["organization"]
+        }
+      },
+      {
+        "name": "bc-code-intelligence_getLayerDiagnostics",
+        "displayName": "Get Layer Diagnostics",
+        "modelDescription": "Get detailed diagnostics about layer loading and status.",
+        "toolReferenceName": "getLayerDiagnostics",
+        "icon": "$(pulse)",
+        "tags": ["bc", "diagnostic", "layers"],
+        "when": "config.bcCodeIntelligence.developer.enableDiagnosticTools",
+        "inputSchema": {
+          "type": "object",
+          "properties": {}
+        }
+      },
+      {
+        "name": "bc-code-intelligence_diagnoseLocalLayer",
+        "displayName": "Diagnose Local Layer",
+        "modelDescription": "Diagnose issues with local/project knowledge layers.",
+        "toolReferenceName": "diagnoseLocalLayer",
+        "icon": "$(folder-opened)",
+        "tags": ["bc", "diagnostic", "local"],
+        "when": "config.bcCodeIntelligence.developer.enableDiagnosticTools",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "path": { "type": "string", "description": "Path to the local layer" }
+          },
+          "required": ["path"]
+        }
+      },
+      {
+        "name": "bc-code-intelligence_reloadLayers",
+        "displayName": "Reload Layers",
+        "modelDescription": "Force reload all knowledge layers from their sources.",
+        "toolReferenceName": "reloadLayers",
+        "icon": "$(refresh)",
+        "tags": ["bc", "diagnostic", "layers", "reload"],
+        "when": "config.bcCodeIntelligence.developer.enableDiagnosticTools",
+        "inputSchema": {
+          "type": "object",
+          "properties": {}
+        }
+      }
     ]
   },
   "scripts": {
-    "vscode:prepublish": "npm run compile",
+    "vscode:prepublish": "npm run compile && npm run generate-agents",
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
     "lint": "eslint src --ext ts",
     "pretest": "npm run compile && npm run lint",
-    "test": "node ./out/test/runTest.js"
+    "test": "node ./out/test/runTest.js",
+    "generate-agents": "node scripts/generate-agents.js"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",

@@ -4,9 +4,23 @@ import type { ExtensionConfig, LayerConfig, AuthMethod, CacheStrategy, LogLevel 
 const CONFIG_SECTION = 'bcCodeIntelligence';
 
 /**
- * Reads VSCode extension settings and provides a typed configuration object
+ * Cached extension context for building paths
  */
-export function getExtensionConfig(scope?: vscode.ConfigurationScope): ExtensionConfig {
+let extensionContext: vscode.ExtensionContext | null = null;
+
+/**
+ * Initialize the config bridge with extension context
+ * Must be called during extension activation
+ */
+export function initConfigBridge(context: vscode.ExtensionContext): void {
+  extensionContext = context;
+}
+
+/**
+ * Reads VSCode extension settings and provides a typed configuration object
+ * @param scope - The resource scope for the configuration. Pass `null` to get effective values without a specific resource.
+ */
+export function getExtensionConfig(scope: vscode.ConfigurationScope | null = null): ExtensionConfig {
   const config = vscode.workspace.getConfiguration(CONFIG_SECTION, scope);
 
   return {
