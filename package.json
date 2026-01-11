@@ -1,0 +1,413 @@
+{
+  "name": "bc-code-intelligence",
+  "displayName": "BC Code Intelligence",
+  "description": "AI-powered Business Central development assistant with specialist personas",
+  "version": "0.1.0",
+  "publisher": "jeremyvyska",
+  "engines": {
+    "vscode": "^1.100.0"
+  },
+  "categories": [
+    "AI",
+    "Programming Languages",
+    "Other"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jeremyvyska/bc-code-intelligence-vscode.git"
+  },
+  "keywords": [
+    "business central",
+    "dynamics 365",
+    "al",
+    "mcp",
+    "ai",
+    "copilot"
+  ],
+  "activationEvents": [
+    "onLanguage:al",
+    "onStartupFinished"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "chatParticipants": [
+      {
+        "id": "bc-code-intelligence",
+        "name": "BC Code Intelligence",
+        "description": "Business Central development assistant with specialist personas",
+        "isSticky": true
+      }
+    ],
+    "chatModes": [
+      {
+        "id": "bc-code-intelligence.sam-coder",
+        "name": "Sam Coder",
+        "description": "Expert BC/AL development and implementation specialist"
+      },
+      {
+        "id": "bc-code-intelligence.alex-architect",
+        "name": "Alex Architect",
+        "description": "Architecture and design specialist for BC solutions"
+      },
+      {
+        "id": "bc-code-intelligence.dean-debug",
+        "name": "Dean Debug",
+        "description": "Debugging and performance optimization specialist"
+      },
+      {
+        "id": "bc-code-intelligence.eva-errors",
+        "name": "Eva Errors",
+        "description": "Error handling and exception management specialist"
+      },
+      {
+        "id": "bc-code-intelligence.quinn-tester",
+        "name": "Quinn Tester",
+        "description": "Testing and quality assurance specialist"
+      },
+      {
+        "id": "bc-code-intelligence.roger-reviewer",
+        "name": "Roger Reviewer",
+        "description": "Code review specialist"
+      },
+      {
+        "id": "bc-code-intelligence.seth-security",
+        "name": "Seth Security",
+        "description": "Security specialist for BC applications"
+      },
+      {
+        "id": "bc-code-intelligence.jordan-bridge",
+        "name": "Jordan Bridge",
+        "description": "Integration and events specialist"
+      },
+      {
+        "id": "bc-code-intelligence.logan-legacy",
+        "name": "Logan Legacy",
+        "description": "Legacy code and upgrade specialist"
+      },
+      {
+        "id": "bc-code-intelligence.uma-ux",
+        "name": "Uma UX",
+        "description": "User experience specialist for BC"
+      },
+      {
+        "id": "bc-code-intelligence.morgan-market",
+        "name": "Morgan Market",
+        "description": "AppSource and ISV specialist"
+      },
+      {
+        "id": "bc-code-intelligence.maya-mentor",
+        "name": "Maya Mentor",
+        "description": "Mentoring and learning specialist"
+      },
+      {
+        "id": "bc-code-intelligence.taylor-docs",
+        "name": "Taylor Docs",
+        "description": "Documentation specialist"
+      },
+      {
+        "id": "bc-code-intelligence.casey-copilot",
+        "name": "Casey Copilot",
+        "description": "AI-assisted development specialist"
+      },
+      {
+        "id": "bc-code-intelligence.parker-pragmatic",
+        "name": "Parker Pragmatic",
+        "description": "AI trust and transparency meta-specialist"
+      },
+      {
+        "id": "bc-code-intelligence.chris-config",
+        "name": "Chris Config",
+        "description": "MCP configuration specialist"
+      }
+    ],
+    "commands": [
+      {
+        "command": "bcCodeIntelligence.switchSpecialist",
+        "title": "Switch Specialist",
+        "category": "BC Code Intelligence"
+      },
+      {
+        "command": "bcCodeIntelligence.workflowAction",
+        "title": "Workflow Actions",
+        "category": "BC Code Intelligence"
+      },
+      {
+        "command": "bcCodeIntelligence.openSetupWizard",
+        "title": "Open Setup Wizard",
+        "category": "BC Code Intelligence"
+      },
+      {
+        "command": "bcCodeIntelligence.selectPrompt",
+        "title": "Select Prompt",
+        "category": "BC Code Intelligence"
+      },
+      {
+        "command": "bcCodeIntelligence.activateSpecialist",
+        "title": "Activate Specialist",
+        "category": "BC Code Intelligence"
+      },
+      {
+        "command": "bcCodeIntelligence.openPromptInEditor",
+        "title": "Open Prompt in Editor",
+        "category": "BC Code Intelligence"
+      },
+      {
+        "command": "bcCodeIntelligence.refreshLayer",
+        "title": "Refresh Layer",
+        "category": "BC Code Intelligence"
+      },
+      {
+        "command": "bcCodeIntelligence.askSpecialistAboutCode",
+        "title": "Ask Specialist About Code",
+        "category": "BC Code Intelligence"
+      },
+      {
+        "command": "bcCodeIntelligence.refreshSpecialists",
+        "title": "Refresh Specialists",
+        "category": "BC Code Intelligence",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "bcCodeIntelligence.refreshPrompts",
+        "title": "Refresh Prompts",
+        "category": "BC Code Intelligence",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "bcCodeIntelligence.refreshLayers",
+        "title": "Refresh Layers",
+        "category": "BC Code Intelligence",
+        "icon": "$(refresh)"
+      }
+    ],
+    "configuration": {
+      "title": "BC Code Intelligence",
+      "properties": {
+        "bcCodeIntelligence.layers.company.enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable company knowledge layer",
+          "scope": "application"
+        },
+        "bcCodeIntelligence.layers.company.url": {
+          "type": "string",
+          "description": "Git repository URL for company knowledge base",
+          "scope": "application"
+        },
+        "bcCodeIntelligence.layers.company.branch": {
+          "type": "string",
+          "default": "main",
+          "description": "Git branch for company layer",
+          "scope": "application"
+        },
+        "bcCodeIntelligence.layers.company.auth": {
+          "type": "string",
+          "enum": [
+            "none",
+            "token",
+            "ssh",
+            "azure-cli"
+          ],
+          "default": "none",
+          "description": "Authentication method for company layer",
+          "scope": "application"
+        },
+        "bcCodeIntelligence.layers.company.tokenEnvVar": {
+          "type": "string",
+          "default": "GITHUB_TOKEN",
+          "description": "Environment variable containing auth token",
+          "scope": "application"
+        },
+        "bcCodeIntelligence.layers.team.enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable team knowledge layer",
+          "scope": "resource"
+        },
+        "bcCodeIntelligence.layers.team.url": {
+          "type": "string",
+          "description": "Git repository URL for team knowledge base",
+          "scope": "resource"
+        },
+        "bcCodeIntelligence.layers.team.branch": {
+          "type": "string",
+          "default": "main",
+          "description": "Git branch for team layer",
+          "scope": "resource"
+        },
+        "bcCodeIntelligence.layers.team.auth": {
+          "type": "string",
+          "enum": [
+            "none",
+            "token",
+            "ssh",
+            "azure-cli"
+          ],
+          "default": "none",
+          "description": "Authentication method for team layer",
+          "scope": "resource"
+        },
+        "bcCodeIntelligence.layers.project.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable project-specific knowledge layer",
+          "scope": "resource"
+        },
+        "bcCodeIntelligence.layers.project.path": {
+          "type": "string",
+          "default": "./bc-code-intel-overrides",
+          "description": "Path to project layer folder (relative to workspace)",
+          "scope": "resource"
+        },
+        "bcCodeIntelligence.codeLens.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show specialist suggestions inline in AL code"
+        },
+        "bcCodeIntelligence.codeLens.maxPerFile": {
+          "type": "number",
+          "default": 20,
+          "description": "Maximum number of CodeLens items per file (0 = unlimited)"
+        },
+        "bcCodeIntelligence.cache.strategy": {
+          "type": "string",
+          "enum": [
+            "none",
+            "minimal",
+            "moderate",
+            "aggressive"
+          ],
+          "default": "moderate",
+          "description": "Caching strategy for knowledge base"
+        },
+        "bcCodeIntelligence.cache.maxSizeMb": {
+          "type": "number",
+          "default": 100,
+          "description": "Maximum cache size in megabytes"
+        },
+        "bcCodeIntelligence.developer.enableDiagnosticTools": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable debug/diagnostic tools for troubleshooting"
+        },
+        "bcCodeIntelligence.developer.logLevel": {
+          "type": "string",
+          "enum": [
+            "error",
+            "warn",
+            "info",
+            "debug"
+          ],
+          "default": "info",
+          "description": "Log level for extension output"
+        }
+      }
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "bcCodeIntelligence",
+          "title": "BC Code Intelligence",
+          "icon": "resources/bc-icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "bcCodeIntelligence": [
+        {
+          "id": "bcCodeIntelligence.specialists",
+          "name": "Specialists"
+        },
+        {
+          "id": "bcCodeIntelligence.prompts",
+          "name": "Prompts"
+        },
+        {
+          "id": "bcCodeIntelligence.layers",
+          "name": "Layers"
+        }
+      ]
+    },
+    "menus": {
+      "view/title": [
+        {
+          "command": "bcCodeIntelligence.refreshSpecialists",
+          "when": "view == bcCodeIntelligence.specialists",
+          "group": "navigation"
+        },
+        {
+          "command": "bcCodeIntelligence.refreshPrompts",
+          "when": "view == bcCodeIntelligence.prompts",
+          "group": "navigation"
+        },
+        {
+          "command": "bcCodeIntelligence.refreshLayers",
+          "when": "view == bcCodeIntelligence.layers",
+          "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "bcCodeIntelligence.activateSpecialist",
+          "when": "view == bcCodeIntelligence.specialists && viewItem == specialist",
+          "group": "inline"
+        },
+        {
+          "command": "bcCodeIntelligence.openPromptInEditor",
+          "when": "view == bcCodeIntelligence.prompts && viewItem == prompt"
+        },
+        {
+          "command": "bcCodeIntelligence.refreshLayer",
+          "when": "view == bcCodeIntelligence.layers && viewItem == layer"
+        }
+      ]
+    },
+    "walkthroughs": [
+      {
+        "id": "bcCodeIntelligence.welcome",
+        "title": "Get Started with BC Code Intelligence",
+        "description": "Set up your BC development assistant",
+        "steps": [
+          {
+            "id": "openWizard",
+            "title": "Set Up Your Layers",
+            "description": "Configure company and project knowledge layers",
+            "media": {
+              "markdown": "media/layer-setup.md"
+            },
+            "completionEvents": [
+              "onCommand:bcCodeIntelligence.openSetupWizard"
+            ]
+          }
+        ]
+      }
+    ],
+    "mcpServerDefinitionProviders": [
+      {
+        "id": "bc-code-intelligence",
+        "label": "BC Code Intelligence MCP Server"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "lint": "eslint src --ext ts",
+    "pretest": "npm run compile && npm run lint",
+    "test": "node ./out/test/runTest.js"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/vscode": "^1.100.0",
+    "@typescript-eslint/eslint-plugin": "^7.0.0",
+    "@typescript-eslint/parser": "^7.0.0",
+    "eslint": "^8.0.0",
+    "typescript": "^5.4.0"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "yaml": "^2.4.0"
+  }
+}

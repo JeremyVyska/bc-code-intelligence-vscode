@@ -1,0 +1,3 @@
+[submodule "bc-code-intelligence-mcp"]
+	path = bc-code-intelligence-mcp
+	url = https://github.com/jeremyvyska/bc-code-intelligence-mcp.git
