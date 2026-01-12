@@ -26,12 +26,14 @@ scripts/
 media/
 resources/
 
-# MCP submodule: exclude everything except dist/index.js and embedded-knowledge/
+# MCP submodule: include dist/, embedded-knowledge/, and node_modules/
 bc-code-intelligence-mcp/**
 !bc-code-intelligence-mcp/dist/
-!bc-code-intelligence-mcp/dist/index.js
 !bc-code-intelligence-mcp/embedded-knowledge/
 !bc-code-intelligence-mcp/embedded-knowledge/**
+!bc-code-intelligence-mcp/node_modules/
+!bc-code-intelligence-mcp/node_modules/**
+!bc-code-intelligence-mcp/package.json
 
 # Node modules: exclude all (extension and MCP server are bundled)
 node_modules/
