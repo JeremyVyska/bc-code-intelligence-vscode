@@ -1,10 +1,15 @@
 import * as vscode from 'vscode';
+import * as fs from 'fs';
+import * as path from 'path';
 import type { SpecialistLoaderService } from '../services/specialist-loader.js';
 import type { SpecialistDefinition } from '../types/index.js';
 
 const PARTICIPANT_PREFIX = 'bc-code-intelligence.';
 const MAX_TOOL_ITERATIONS = 10;
 const TOOL_PREFIX = 'bc-code-intelligence_';
+
+/** Cache for loaded bootloader instructions */
+const bootloaderCache: Map<string, string> = new Map();
 
 /**
  * Creates and registers chat participants for all specialists
@@ -33,7 +38,7 @@ export function registerChatParticipant(
       const participant = vscode.chat.createChatParticipant(
         participantId,
         (request, chatContext, stream, token) =>
-          handleChatRequest(request, chatContext, stream, token, specialist, specialistLoader, outputChannel)
+          handleChatRequest(request, chatContext, stream, token, specialist, context.extensionPath, outputChannel)
       );
 
       participant.iconPath = vscode.Uri.joinPath(context.extensionUri, 'resources', 'bc-icon.svg');
@@ -51,9 +56,77 @@ export function registerChatParticipant(
 }
 
 /**
- * Builds system prompt for a specialist
+ * Loads bootloader instructions from an .agent.md file
+ * Returns the markdown body (everything after the YAML frontmatter)
  */
-function buildSystemPrompt(specialist: SpecialistDefinition): string {
+function loadBootloaderInstructions(extensionPath: string, specialistId: string, logFn: (msg: string) => void): string | undefined {
+  // Check cache first
+  if (bootloaderCache.has(specialistId)) {
+    return bootloaderCache.get(specialistId);
+  }
+
+  // Convert specialist_id to agent filename format (e.g., "sam-coder" -> "sam-coder.agent.md")
+  // The files use title case in some cases, so we'll try multiple patterns
+  const agentsDir = path.join(extensionPath, 'assets', 'agents');
+
+  if (!fs.existsSync(agentsDir)) {
+    logFn(`[Bootloader] Agents directory not found: ${agentsDir}`);
+    return undefined;
+  }
+
+  // Find matching agent file (case-insensitive)
+  const files = fs.readdirSync(agentsDir);
+  const agentFile = files.find(f =>
+    f.toLowerCase() === `${specialistId.toLowerCase()}.agent.md`
+  );
+
+  if (!agentFile) {
+    logFn(`[Bootloader] No agent file found for: ${specialistId}`);
+    return undefined;
+  }
+
+  const filePath = path.join(agentsDir, agentFile);
+
+  try {
+    const content = fs.readFileSync(filePath, 'utf-8');
+
+    // Extract markdown body after YAML frontmatter
+    const match = content.match(/^---\r?\n[\s\S]*?\r?\n---\r?\n([\s\S]*)$/);
+    if (!match) {
+      logFn(`[Bootloader] Invalid frontmatter in: ${filePath}`);
+      return undefined;
+    }
+
+    const bootloaderInstructions = match[1].trim();
+    bootloaderCache.set(specialistId, bootloaderInstructions);
+    logFn(`[Bootloader] Loaded instructions for: ${specialistId} (${bootloaderInstructions.length} chars)`);
+
+    return bootloaderInstructions;
+  } catch (error) {
+    logFn(`[Bootloader] Error reading ${filePath}: ${error}`);
+    return undefined;
+  }
+}
+
+/**
+ * Builds system prompt for a specialist, including bootloader instructions
+ */
+function buildSystemPrompt(
+  specialist: SpecialistDefinition,
+  extensionPath: string,
+  logFn: (msg: string) => void
+): string {
+  // Load bootloader instructions from .agent.md file
+  const bootloaderInstructions = loadBootloaderInstructions(extensionPath, specialist.specialist_id, logFn);
+
+  // If we have bootloader instructions, use them as the primary prompt
+  // The bootloader tells the agent to call MCP tools to load its full persona
+  if (bootloaderInstructions) {
+    return bootloaderInstructions;
+  }
+
+  // Fallback: build a basic prompt from specialist definition if no bootloader found
+  logFn(`[Bootloader] Using fallback prompt for: ${specialist.specialist_id}`);
   return `You are ${specialist.title}.
 
 ${specialist.systemPrompt}
@@ -104,15 +177,16 @@ async function handleChatRequest(
   stream: vscode.ChatResponseStream,
   token: vscode.CancellationToken,
   specialist: SpecialistDefinition,
-  specialistLoader: SpecialistLoaderService,
+  extensionPath: string,
   outputChannel: vscode.OutputChannel
 ): Promise<void> {
   outputChannel.appendLine(`[@${specialist.specialist_id}] User query: ${request.prompt}`);
   outputChannel.appendLine(`[@${specialist.specialist_id}] Active specialist: ${specialist.title}`);
 
-  // Build conversation messages with system prompt
+  // Build conversation messages with system prompt (includes bootloader instructions)
+  const systemPrompt = buildSystemPrompt(specialist, extensionPath, (msg) => outputChannel.appendLine(msg));
   const messages: vscode.LanguageModelChatMessage[] = [
-    vscode.LanguageModelChatMessage.User(buildSystemPrompt(specialist)),
+    vscode.LanguageModelChatMessage.User(systemPrompt),
   ];
 
   // Add conversation history (last 10 exchanges)
