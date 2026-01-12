@@ -2,8 +2,9 @@
   "name": "bc-code-intelligence",
   "displayName": "BC Code Intelligence",
   "description": "AI-powered Business Central development assistant with specialist personas",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "publisher": "jeremyvyska",
+  "icon": "assets/bc-code-intel-logo.png",
   "engines": {
     "vscode": "^1.100.0"
   },
@@ -17,6 +18,10 @@
     "type": "git",
     "url": "https://github.com/jeremyvyska/bc-code-intelligence-vscode.git"
   },
+  "bugs": {
+    "url": "https://github.com/jeremyvyska/bc-code-intelligence-vscode/issues"
+  },
+  "homepage": "https://github.com/jeremyvyska/bc-code-intelligence-vscode",
   "keywords": [
     "business central",
     "dynamics 365",
@@ -517,15 +522,39 @@
         "modelDescription": "Search the Business Central knowledge base for topics, specialists, workflows, and best practices. Use this to find relevant BC development guidance.",
         "toolReferenceName": "findKnowledge",
         "icon": "$(search)",
-        "tags": ["bc", "business-central", "knowledge", "search"],
+        "tags": [
+          "bc",
+          "business-central",
+          "knowledge",
+          "search"
+        ],
         "inputSchema": {
           "type": "object",
           "properties": {
-            "query": { "type": "string", "description": "Search query for BC knowledge" },
-            "search_type": { "type": "string", "description": "Type of content to search", "enum": ["topics", "specialists", "workflows", "all"], "default": "all" },
-            "limit": { "type": "number", "description": "Maximum results to return", "default": 10 }
+            "query": {
+              "type": "string",
+              "description": "Search query for BC knowledge"
+            },
+            "search_type": {
+              "type": "string",
+              "description": "Type of content to search",
+              "enum": [
+                "topics",
+                "specialists",
+                "workflows",
+                "all"
+              ],
+              "default": "all"
+            },
+            "limit": {
+              "type": "number",
+              "description": "Maximum results to return",
+              "default": 10
+            }
           },
-          "required": ["query"]
+          "required": [
+            "query"
+          ]
         }
       },
       {
@@ -534,14 +563,28 @@
         "modelDescription": "Retrieve detailed content for a specific Business Central knowledge topic, including code samples and best practices.",
         "toolReferenceName": "getTopic",
         "icon": "$(book)",
-        "tags": ["bc", "business-central", "knowledge", "topic"],
+        "tags": [
+          "bc",
+          "business-central",
+          "knowledge",
+          "topic"
+        ],
         "inputSchema": {
           "type": "object",
           "properties": {
-            "topic_id": { "type": "string", "description": "The topic ID to retrieve" },
-            "include_samples": { "type": "boolean", "description": "Include code samples in response", "default": true }
+            "topic_id": {
+              "type": "string",
+              "description": "The topic ID to retrieve"
+            },
+            "include_samples": {
+              "type": "boolean",
+              "description": "Include code samples in response",
+              "default": true
+            }
           },
-          "required": ["topic_id"]
+          "required": [
+            "topic_id"
+          ]
         }
       },
       {
@@ -550,16 +593,36 @@
         "modelDescription": "Consult a BC specialist for expert guidance. Specialists include Sam Coder (development), Alex Architect (architecture), Dean Debug (debugging), Quinn Tester (testing), and more.",
         "toolReferenceName": "askExpert",
         "icon": "$(comment-discussion)",
-        "tags": ["bc", "business-central", "expert", "specialist"],
+        "tags": [
+          "bc",
+          "business-central",
+          "expert",
+          "specialist"
+        ],
         "inputSchema": {
           "type": "object",
           "properties": {
-            "question": { "type": "string", "description": "Question for the specialist" },
-            "context": { "type": "string", "description": "Additional context about your situation" },
-            "preferred_specialist": { "type": "string", "description": "Preferred specialist ID (e.g., sam-coder, alex-architect)" },
-            "autonomous_mode": { "type": "boolean", "description": "Allow specialist to work autonomously", "default": false }
+            "question": {
+              "type": "string",
+              "description": "Question for the specialist"
+            },
+            "context": {
+              "type": "string",
+              "description": "Additional context about your situation"
+            },
+            "preferred_specialist": {
+              "type": "string",
+              "description": "Preferred specialist ID (e.g., sam-coder, alex-architect)"
+            },
+            "autonomous_mode": {
+              "type": "boolean",
+              "description": "Allow specialist to work autonomously",
+              "default": false
+            }
           },
-          "required": ["question"]
+          "required": [
+            "question"
+          ]
         }
       },
       {
@@ -568,15 +631,40 @@
         "modelDescription": "Analyze AL (Business Central) code for performance issues, quality concerns, security vulnerabilities, or pattern compliance.",
         "toolReferenceName": "analyzeCode",
         "icon": "$(microscope)",
-        "tags": ["bc", "business-central", "al", "analysis", "code-review"],
+        "tags": [
+          "bc",
+          "business-central",
+          "al",
+          "analysis",
+          "code-review"
+        ],
         "inputSchema": {
           "type": "object",
           "properties": {
-            "code": { "type": "string", "description": "AL code to analyze" },
-            "analysis_type": { "type": "string", "description": "Type of analysis to perform", "enum": ["performance", "quality", "security", "patterns", "comprehensive"], "default": "comprehensive" },
-            "operation": { "type": "string", "description": "Specific operation context (e.g., insert, modify, delete)" }
+            "code": {
+              "type": "string",
+              "description": "AL code to analyze"
+            },
+            "analysis_type": {
+              "type": "string",
+              "description": "Type of analysis to perform",
+              "enum": [
+                "performance",
+                "quality",
+                "security",
+                "patterns",
+                "comprehensive"
+              ],
+              "default": "comprehensive"
+            },
+            "operation": {
+              "type": "string",
+              "description": "Specific operation context (e.g., insert, modify, delete)"
+            }
           },
-          "required": ["code"]
+          "required": [
+            "code"
+          ]
         }
       },
       {
@@ -585,15 +673,51 @@
         "modelDescription": "Start a multi-phase workflow for complex BC development tasks like architecture review, security audit, or upgrade planning.",
         "toolReferenceName": "startWorkflow",
         "icon": "$(rocket)",
-        "tags": ["bc", "business-central", "workflow"],
+        "tags": [
+          "bc",
+          "business-central",
+          "workflow"
+        ],
         "inputSchema": {
           "type": "object",
           "properties": {
-            "workflow_type": { "type": "string", "description": "Type of workflow to start", "enum": ["code_optimization", "architecture_review", "security_audit", "perf_review", "integration_design", "upgrade_planning", "testing_strategy", "dev_onboarding", "app_takeover", "spec_analysis", "bug_investigation", "monolith_to_modules", "data_flow_tracing", "full_review"] },
-            "context": { "type": "string", "description": "Context for the workflow" },
-            "execution_mode": { "type": "string", "description": "Execution mode", "enum": ["guided", "autonomous"], "default": "guided" }
+            "workflow_type": {
+              "type": "string",
+              "description": "Type of workflow to start",
+              "enum": [
+                "code_optimization",
+                "architecture_review",
+                "security_audit",
+                "perf_review",
+                "integration_design",
+                "upgrade_planning",
+                "testing_strategy",
+                "dev_onboarding",
+                "app_takeover",
+                "spec_analysis",
+                "bug_investigation",
+                "monolith_to_modules",
+                "data_flow_tracing",
+                "full_review"
+              ]
+            },
+            "context": {
+              "type": "string",
+              "description": "Context for the workflow"
+            },
+            "execution_mode": {
+              "type": "string",
+              "description": "Execution mode",
+              "enum": [
+                "guided",
+                "autonomous"
+              ],
+              "default": "guided"
+            }
           },
-          "required": ["workflow_type"]
+          "required": [
+            "workflow_type"
+          ]
         }
       },
       {
@@ -602,15 +726,30 @@
         "modelDescription": "Advance a running workflow to its next phase, providing results from the current phase.",
         "toolReferenceName": "advanceWorkflow",
         "icon": "$(arrow-right)",
-        "tags": ["bc", "business-central", "workflow"],
+        "tags": [
+          "bc",
+          "business-central",
+          "workflow"
+        ],
         "inputSchema": {
           "type": "object",
           "properties": {
-            "workflow_id": { "type": "string", "description": "ID of the workflow to advance" },
-            "phase_results": { "type": "string", "description": "Results from the current phase" },
-            "next_focus": { "type": "string", "description": "Specific focus for the next phase" }
+            "workflow_id": {
+              "type": "string",
+              "description": "ID of the workflow to advance"
+            },
+            "phase_results": {
+              "type": "string",
+              "description": "Results from the current phase"
+            },
+            "next_focus": {
+              "type": "string",
+              "description": "Specific focus for the next phase"
+            }
           },
-          "required": ["workflow_id"]
+          "required": [
+            "workflow_id"
+          ]
         }
       },
       {
@@ -619,14 +758,34 @@
         "modelDescription": "Get guidance, status, or next steps for a running workflow.",
         "toolReferenceName": "getWorkflowHelp",
         "icon": "$(question)",
-        "tags": ["bc", "business-central", "workflow", "help"],
+        "tags": [
+          "bc",
+          "business-central",
+          "workflow",
+          "help"
+        ],
         "inputSchema": {
           "type": "object",
           "properties": {
-            "workflow_id": { "type": "string", "description": "ID of the workflow" },
-            "help_type": { "type": "string", "description": "Type of help needed", "enum": ["status", "guidance", "next-steps", "methodology"], "default": "guidance" }
+            "workflow_id": {
+              "type": "string",
+              "description": "ID of the workflow"
+            },
+            "help_type": {
+              "type": "string",
+              "description": "Type of help needed",
+              "enum": [
+                "status",
+                "guidance",
+                "next-steps",
+                "methodology"
+              ],
+              "default": "guidance"
+            }
           },
-          "required": ["workflow_id"]
+          "required": [
+            "workflow_id"
+          ]
         }
       },
       {
@@ -635,12 +794,22 @@
         "modelDescription": "List available BC development specialists, optionally filtered by domain or expertise.",
         "toolReferenceName": "listSpecialists",
         "icon": "$(organization)",
-        "tags": ["bc", "business-central", "specialists"],
+        "tags": [
+          "bc",
+          "business-central",
+          "specialists"
+        ],
         "inputSchema": {
           "type": "object",
           "properties": {
-            "domain": { "type": "string", "description": "Filter by domain (e.g., development, testing, security)" },
-            "expertise": { "type": "string", "description": "Filter by expertise area" }
+            "domain": {
+              "type": "string",
+              "description": "Filter by domain (e.g., development, testing, security)"
+            },
+            "expertise": {
+              "type": "string",
+              "description": "Filter by expertise area"
+            }
           }
         }
       },
@@ -650,14 +819,27 @@
         "modelDescription": "Set the workspace root and available MCP servers for context-aware assistance.",
         "toolReferenceName": "setWorkspaceInfo",
         "icon": "$(folder)",
-        "tags": ["bc", "business-central", "workspace", "config"],
+        "tags": [
+          "bc",
+          "business-central",
+          "workspace",
+          "config"
+        ],
         "inputSchema": {
           "type": "object",
           "properties": {
-            "workspace_root": { "type": "string", "description": "Path to workspace root" },
-            "available_mcps": { "type": "string", "description": "JSON array of available MCP server names" }
+            "workspace_root": {
+              "type": "string",
+              "description": "Path to workspace root"
+            },
+            "available_mcps": {
+              "type": "string",
+              "description": "JSON array of available MCP server names"
+            }
           },
-          "required": ["workspace_root"]
+          "required": [
+            "workspace_root"
+          ]
         }
       },
       {
@@ -666,7 +848,11 @@
         "modelDescription": "Retrieve the current workspace context and configuration.",
         "toolReferenceName": "getWorkspaceInfo",
         "icon": "$(info)",
-        "tags": ["bc", "business-central", "workspace"],
+        "tags": [
+          "bc",
+          "business-central",
+          "workspace"
+        ],
         "inputSchema": {
           "type": "object",
           "properties": {}
@@ -678,14 +864,23 @@
         "modelDescription": "Diagnose issues with Git-based knowledge layers.",
         "toolReferenceName": "diagnoseGitLayer",
         "icon": "$(git-branch)",
-        "tags": ["bc", "diagnostic", "git"],
+        "tags": [
+          "bc",
+          "diagnostic",
+          "git"
+        ],
         "when": "config.bcCodeIntelligence.developer.enableDiagnosticTools",
         "inputSchema": {
           "type": "object",
           "properties": {
-            "layer_name": { "type": "string", "description": "Name of the layer to diagnose" }
+            "layer_name": {
+              "type": "string",
+              "description": "Name of the layer to diagnose"
+            }
           },
-          "required": ["layer_name"]
+          "required": [
+            "layer_name"
+          ]
         }
       },
       {
@@ -694,7 +889,11 @@
         "modelDescription": "Validate the configuration of knowledge layers.",
         "toolReferenceName": "validateLayerConfig",
         "icon": "$(check)",
-        "tags": ["bc", "diagnostic", "config"],
+        "tags": [
+          "bc",
+          "diagnostic",
+          "config"
+        ],
         "when": "config.bcCodeIntelligence.developer.enableDiagnosticTools",
         "inputSchema": {
           "type": "object",
@@ -707,14 +906,24 @@
         "modelDescription": "Test if an Azure DevOps Personal Access Token is valid.",
         "toolReferenceName": "testAzureDevOpsPat",
         "icon": "$(key)",
-        "tags": ["bc", "diagnostic", "azure-devops", "auth"],
+        "tags": [
+          "bc",
+          "diagnostic",
+          "azure-devops",
+          "auth"
+        ],
         "when": "config.bcCodeIntelligence.developer.enableDiagnosticTools",
         "inputSchema": {
           "type": "object",
           "properties": {
-            "organization": { "type": "string", "description": "Azure DevOps organization name" }
+            "organization": {
+              "type": "string",
+              "description": "Azure DevOps organization name"
+            }
           },
-          "required": ["organization"]
+          "required": [
+            "organization"
+          ]
         }
       },
       {
@@ -723,7 +932,11 @@
         "modelDescription": "Get detailed diagnostics about layer loading and status.",
         "toolReferenceName": "getLayerDiagnostics",
         "icon": "$(pulse)",
-        "tags": ["bc", "diagnostic", "layers"],
+        "tags": [
+          "bc",
+          "diagnostic",
+          "layers"
+        ],
         "when": "config.bcCodeIntelligence.developer.enableDiagnosticTools",
         "inputSchema": {
           "type": "object",
@@ -736,14 +949,23 @@
         "modelDescription": "Diagnose issues with local/project knowledge layers.",
         "toolReferenceName": "diagnoseLocalLayer",
         "icon": "$(folder-opened)",
-        "tags": ["bc", "diagnostic", "local"],
+        "tags": [
+          "bc",
+          "diagnostic",
+          "local"
+        ],
         "when": "config.bcCodeIntelligence.developer.enableDiagnosticTools",
         "inputSchema": {
           "type": "object",
           "properties": {
-            "path": { "type": "string", "description": "Path to the local layer" }
+            "path": {
+              "type": "string",
+              "description": "Path to the local layer"
+            }
           },
-          "required": ["path"]
+          "required": [
+            "path"
+          ]
         }
       },
       {
@@ -752,7 +974,12 @@
         "modelDescription": "Force reload all knowledge layers from their sources.",
         "toolReferenceName": "reloadLayers",
         "icon": "$(refresh)",
-        "tags": ["bc", "diagnostic", "layers", "reload"],
+        "tags": [
+          "bc",
+          "diagnostic",
+          "layers",
+          "reload"
+        ],
         "when": "config.bcCodeIntelligence.developer.enableDiagnosticTools",
         "inputSchema": {
           "type": "object",
@@ -762,7 +989,10 @@
     ]
   },
   "scripts": {
-    "vscode:prepublish": "npm run compile && npm run generate-agents",
+    "vscode:prepublish": "npm run build && npm run build:mcp && npm run generate-agents",
+    "build": "esbuild src/extension.ts --bundle --platform=node --target=node16 --external:vscode --outfile=dist/extension.js",
+    "build:mcp": "esbuild bc-code-intelligence-mcp/src/index.ts --bundle --platform=node --target=node18 --format=esm --banner:js=\"#!/usr/bin/env node\" --outfile=bc-code-intelligence-mcp/dist/index.js",
+    "watch:build": "esbuild src/extension.ts --bundle --platform=node --target=node16 --external:vscode --outfile=dist/extension.js --watch",
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
     "lint": "eslint src --ext ts",
@@ -775,6 +1005,7 @@
     "@types/vscode": "^1.100.0",
     "@typescript-eslint/eslint-plugin": "^7.0.0",
     "@typescript-eslint/parser": "^7.0.0",
+    "esbuild": "^0.19.12",
     "eslint": "^8.0.0",
     "typescript": "^5.4.0"
   },

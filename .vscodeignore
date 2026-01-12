@@ -1,0 +1,42 @@
+# Exclude VCS and CI
+.git
+.github
+
+# Editor and local config
+.vscode
+
+# Source and tests (we ship compiled output in dist)
+src/
+test/
+tests/
+__tests__/
+
+# Build artifacts and maps
+*.map
+*.ts
+
+# Dev and docs
+docs/
+Documentation/
+dev-tools/
+UsageTelemetryAnalysis/
+_reference/
+packages/
+scripts/
+media/
+resources/
+
+# MCP submodule: exclude everything except dist/index.js and embedded-knowledge/
+bc-code-intelligence-mcp/**
+!bc-code-intelligence-mcp/dist/
+!bc-code-intelligence-mcp/dist/index.js
+!bc-code-intelligence-mcp/embedded-knowledge/
+!bc-code-intelligence-mcp/embedded-knowledge/**
+
+# Node modules: exclude all (extension and MCP server are bundled)
+node_modules/
+
+# Misc
+*.log
+/.vscodeignore
+nul
