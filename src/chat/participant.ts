@@ -163,8 +163,13 @@ Always use tools when they can provide better answers than your training data al
 /**
  * Gets available BC Code Intelligence tools (MCP tools)
  * MCP tools are registered with names like "bc-code-intelligence/tool_name"
+ *
+ * Returns both the tools and a mapping from model-transformed names back to original names
  */
-function getBCIntelTools(logFn: (msg: string) => void): vscode.LanguageModelToolInformation[] {
+function getBCIntelTools(logFn: (msg: string) => void): {
+  tools: vscode.LanguageModelToolInformation[];
+  nameMapping: Map<string, string>;
+} {
   const allTools = vscode.lm.tools;
 
   // Log all available tools for debugging
@@ -173,16 +178,45 @@ function getBCIntelTools(logFn: (msg: string) => void): vscode.LanguageModelTool
   // MCP tools use "/" separator (e.g., "bc-code-intelligence/set_workspace_info")
   const mcpTools = allTools.filter(tool => tool.name.startsWith('bc-code-intelligence/'));
 
+  // Build a mapping from potential model-transformed names back to original names
+  // Models may transform "bc-code-intelligence/set_workspace_info" to "bc-code-intelligence_setWorkspaceInfo"
+  const nameMapping = new Map<string, string>();
+
+  const buildNameMapping = (tools: vscode.LanguageModelToolInformation[]) => {
+    for (const tool of tools) {
+      // Map original name to itself
+      nameMapping.set(tool.name, tool.name);
+
+      // Also map potential transformed variants back to original
+      // Transform: "bc-code-intelligence/set_workspace_info" -> "bc-code-intelligence_set_workspace_info"
+      const underscoreVariant = tool.name.replace('/', '_');
+      nameMapping.set(underscoreVariant, tool.name);
+
+      // Transform: snake_case to camelCase after the prefix
+      // "bc-code-intelligence_set_workspace_info" -> "bc-code-intelligence_setWorkspaceInfo"
+      const parts = underscoreVariant.split('_');
+      if (parts.length > 2) {
+        const prefix = parts.slice(0, 2).join('_'); // "bc-code-intelligence"
+        const rest = parts.slice(2); // ["set", "workspace", "info"]
+        const camelCase = rest[0] + rest.slice(1).map(p => p.charAt(0).toUpperCase() + p.slice(1)).join('');
+        const camelCaseVariant = `${prefix}_${camelCase}`;
+        nameMapping.set(camelCaseVariant, tool.name);
+      }
+    }
+  };
+
   // If MCP tools are available, prefer them (they're the real implementation)
   if (mcpTools.length > 0) {
     logFn(`[Tools] Using ${mcpTools.length} MCP tools: ${mcpTools.map(t => t.name).join(', ')}`);
-    return mcpTools;
+    buildNameMapping(mcpTools);
+    return { tools: mcpTools, nameMapping };
   }
 
   // Fallback to Language Model tool wrappers (use "_" prefix)
   const lmTools = allTools.filter(tool => tool.name.startsWith(TOOL_PREFIX));
   logFn(`[Tools] Using ${lmTools.length} LM tool wrappers: ${lmTools.map(t => t.name).join(', ')}`);
-  return lmTools;
+  buildNameMapping(lmTools);
+  return { tools: lmTools, nameMapping };
 }
 
 /**
@@ -261,8 +295,11 @@ async function handleChatRequest(
     outputChannel.appendLine(`[@${specialist.specialist_id}] Using model: ${model.name}`);
 
     // Get available BC Code Intelligence tools (prefer MCP tools over LM wrappers)
-    const bcTools = getBCIntelTools((msg) => outputChannel.appendLine(msg));
+    const { tools: bcTools, nameMapping: toolNameMapping } = getBCIntelTools((msg) => outputChannel.appendLine(msg));
     outputChannel.appendLine(`[@${specialist.specialist_id}] BC tools found: ${bcTools.length}`);
+
+    // Log the name mappings for debugging
+    outputChannel.appendLine(`[@${specialist.specialist_id}] Tool name mappings: ${Array.from(toolNameMapping.entries()).map(([k, v]) => `${k} -> ${v}`).join(', ')}`);
 
     // Map tools to format expected by model
     const availableTools = bcTools.map(tool => ({
@@ -305,12 +342,14 @@ async function handleChatRequest(
       const toolResultParts: vscode.LanguageModelToolResultPart[] = [];
 
       for (const toolCall of toolCalls) {
-        outputChannel.appendLine(`[@${specialist.specialist_id}] Tool call: ${toolCall.name} (callId: ${toolCall.callId})`);
-        stream.progress(`Using tool: ${toolCall.name}...`);
+        // Resolve the actual tool name from the model's potentially transformed name
+        const resolvedToolName = toolNameMapping.get(toolCall.name) ?? toolCall.name;
+        outputChannel.appendLine(`[@${specialist.specialist_id}] Tool call: ${toolCall.name} -> resolved to: ${resolvedToolName} (callId: ${toolCall.callId})`);
+        stream.progress(`Using tool: ${resolvedToolName}...`);
 
         try {
           const toolResult = await vscode.lm.invokeTool(
-            toolCall.name,
+            resolvedToolName,
             {
               toolInvocationToken: request.toolInvocationToken,
               input: toolCall.input,
@@ -327,14 +366,14 @@ async function handleChatRequest(
           ));
         } catch (toolError: unknown) {
           const errorMessage = toolError instanceof Error ? toolError.message : String(toolError);
-          outputChannel.appendLine(`[@${specialist.specialist_id}] Tool error: ${errorMessage}`);
-          stream.markdown(`\n\n⚠️ Tool ${toolCall.name} failed: ${errorMessage}\n\n`);
+          outputChannel.appendLine(`[@${specialist.specialist_id}] Tool error for ${resolvedToolName}: ${errorMessage}`);
+          stream.markdown(`\n\n⚠️ Tool ${resolvedToolName} failed: ${errorMessage}\n\n`);
 
           // Still provide a response for this tool call
           assistantToolCalls.push(toolCall);
           toolResultParts.push(new vscode.LanguageModelToolResultPart(
             toolCall.callId,
-            [new vscode.LanguageModelTextPart(`Tool ${toolCall.name} failed: ${errorMessage}`)]
+            [new vscode.LanguageModelTextPart(`Tool ${resolvedToolName} failed: ${errorMessage}`)]
           ));
         }
       }

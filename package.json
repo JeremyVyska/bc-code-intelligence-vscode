@@ -2,7 +2,7 @@
   "name": "bc-code-intelligence",
   "displayName": "BC Code Intelligence",
   "description": "AI-powered Business Central development assistant with specialist personas",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "publisher": "jeremyvyska",
   "icon": "assets/bc-code-intel-logo.png",
   "engines": {
