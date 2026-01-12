@@ -161,11 +161,28 @@ Always use tools when they can provide better answers than your training data al
 }
 
 /**
- * Gets available BC Code Intelligence tools
+ * Gets available BC Code Intelligence tools (MCP tools)
+ * MCP tools are registered with names like "bc-code-intelligence/tool_name"
  */
-function getBCIntelTools(): vscode.LanguageModelToolInformation[] {
+function getBCIntelTools(logFn: (msg: string) => void): vscode.LanguageModelToolInformation[] {
   const allTools = vscode.lm.tools;
-  return allTools.filter(tool => tool.name.startsWith(TOOL_PREFIX));
+
+  // Log all available tools for debugging
+  logFn(`[Tools] All available tools (${allTools.length}): ${allTools.map(t => t.name).join(', ')}`);
+
+  // MCP tools use "/" separator (e.g., "bc-code-intelligence/set_workspace_info")
+  const mcpTools = allTools.filter(tool => tool.name.startsWith('bc-code-intelligence/'));
+
+  // If MCP tools are available, prefer them (they're the real implementation)
+  if (mcpTools.length > 0) {
+    logFn(`[Tools] Using ${mcpTools.length} MCP tools: ${mcpTools.map(t => t.name).join(', ')}`);
+    return mcpTools;
+  }
+
+  // Fallback to Language Model tool wrappers (use "_" prefix)
+  const lmTools = allTools.filter(tool => tool.name.startsWith(TOOL_PREFIX));
+  logFn(`[Tools] Using ${lmTools.length} LM tool wrappers: ${lmTools.map(t => t.name).join(', ')}`);
+  return lmTools;
 }
 
 /**
@@ -243,13 +260,9 @@ async function handleChatRequest(
       models[0];
     outputChannel.appendLine(`[@${specialist.specialist_id}] Using model: ${model.name}`);
 
-    // Get available BC Code Intelligence tools
-    const bcTools = getBCIntelTools();
+    // Get available BC Code Intelligence tools (prefer MCP tools over LM wrappers)
+    const bcTools = getBCIntelTools((msg) => outputChannel.appendLine(msg));
     outputChannel.appendLine(`[@${specialist.specialist_id}] BC tools found: ${bcTools.length}`);
-
-    if (bcTools.length > 0) {
-      outputChannel.appendLine(`[@${specialist.specialist_id}] Tool names: ${bcTools.map(t => t.name).join(', ')}`);
-    }
 
     // Map tools to format expected by model
     const availableTools = bcTools.map(tool => ({
