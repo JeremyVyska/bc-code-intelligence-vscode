@@ -24,7 +24,8 @@ _reference/
 packages/
 scripts/
 media/
-resources/
+resources/**
+!resources/bc-icon.svg
 
 # MCP submodule: include dist/, embedded-knowledge/, and node_modules/
 bc-code-intelligence-mcp/**
