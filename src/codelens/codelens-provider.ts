@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import type { SpecialistLoaderService } from '../services/specialist-loader.js';
 
 /**
- * CodeLens mapping entry from codelens-mappings.yaml
+ * CodeLens mapping entry from codelens-mappings.yaml or MCP
  */
 export interface CodeLensMapping {
   pattern: string;
@@ -13,7 +13,7 @@ export interface CodeLensMapping {
 
 /**
  * Default CodeLens mappings for AL files
- * These are built-in; additional mappings can come from layers
+ * Used as fallback when MCP is unavailable
  */
 const DEFAULT_CODELENS_MAPPINGS: CodeLensMapping[] = [
   {
@@ -89,21 +89,68 @@ export class BCCodeLensProvider implements vscode.CodeLensProvider {
   private compiledPatterns: Map<CodeLensMapping, RegExp> = new Map();
 
   constructor(private specialistLoader: SpecialistLoaderService) {
-    this.loadMappings();
+    // Start with defaults, then try MCP
+    this.loadDefaultMappings();
+    this.loadMappingsFromMcp();
   }
 
   /**
-   * Load CodeLens mappings and compile patterns
+   * Load default CodeLens mappings (fallback)
    */
-  private loadMappings(): void {
-    // Start with default mappings
+  private loadDefaultMappings(): void {
     this.mappings = [...DEFAULT_CODELENS_MAPPINGS];
+    this.enrichAndCompileMappings();
+  }
 
-    // Add emoji from specialist definitions
+  /**
+   * Load CodeLens mappings from MCP server
+   * Falls back to defaults if MCP unavailable
+   */
+  private async loadMappingsFromMcp(): Promise<void> {
+    try {
+      const result = await vscode.lm.invokeTool(
+        'bc-code-intelligence/get_codelens_mappings',
+        { input: {}, toolInvocationToken: undefined },
+        new vscode.CancellationTokenSource().token
+      );
+
+      // Parse the result
+      if (result && result instanceof vscode.LanguageModelToolResult) {
+        for (const part of result.content) {
+          if (part instanceof vscode.LanguageModelTextPart) {
+            const parsed = JSON.parse(part.value);
+            if (parsed.mappings && Array.isArray(parsed.mappings)) {
+              this.mappings = parsed.mappings.map((m: any) => ({
+                pattern: m.pattern,
+                specialist: m.specialist,
+                label: m.label,
+                specialistEmoji: m.specialistEmoji,
+              }));
+              this.enrichAndCompileMappings();
+              this._onDidChangeCodeLenses.fire();
+              console.log(`[CodeLens] Loaded ${this.mappings.length} mappings from MCP (${parsed.layer_count} layers)`);
+              return;
+            }
+          }
+        }
+      }
+    } catch (error) {
+      // MCP not available or error - keep using defaults
+      console.log('[CodeLens] MCP unavailable, using default mappings:', error instanceof Error ? error.message : 'Unknown error');
+    }
+  }
+
+  /**
+   * Enrich mappings with emoji and compile regex patterns
+   */
+  private enrichAndCompileMappings(): void {
+    // Add emoji from specialist definitions (if not already present)
     for (const mapping of this.mappings) {
-      const specialist = this.specialistLoader.get(mapping.specialist);
-      if (specialist) {
-        mapping.specialistEmoji = specialist.emoji;
+      if (!mapping.specialistEmoji) {
+        const specialist = this.specialistLoader.get(mapping.specialist);
+        if (specialist) {
+          mapping.specialistEmoji = specialist.emoji;
+        }
       }
     }
 
@@ -122,7 +169,9 @@ export class BCCodeLensProvider implements vscode.CodeLensProvider {
    * Refresh mappings (e.g., when layers change)
    */
   refresh(): void {
-    this.loadMappings();
+    // Try MCP first, will fall back to defaults
+    this.loadDefaultMappings();
+    this.loadMappingsFromMcp();
     this._onDidChangeCodeLenses.fire();
   }
 
