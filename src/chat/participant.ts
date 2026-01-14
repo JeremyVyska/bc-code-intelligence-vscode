@@ -7,6 +7,7 @@ import type { SpecialistDefinition } from '../types/index.js';
 const PARTICIPANT_PREFIX = 'bc-code-intelligence.';
 const MAX_TOOL_ITERATIONS = 10;
 const TOOL_PREFIX = 'bc-code-intelligence_';
+const MCP_TOOL_PREFIX = 'mcp_bc_code_intel_';
 
 /** Cache for loaded bootloader instructions */
 const bootloaderCache: Map<string, string> = new Map();
@@ -162,7 +163,7 @@ Always use tools when they can provide better answers than your training data al
 
 /**
  * Gets available BC Code Intelligence tools (MCP tools)
- * MCP tools are registered with names like "bc-code-intelligence/tool_name"
+ * VS Code registers MCP tools with names like "mcp_bc_code_intel_tool_name"
  *
  * Returns both the tools and a mapping from model-transformed names back to original names
  */
@@ -175,33 +176,16 @@ function getBCIntelTools(logFn: (msg: string) => void): {
   // Log all available tools for debugging
   logFn(`[Tools] All available tools (${allTools.length}): ${allTools.map(t => t.name).join(', ')}`);
 
-  // MCP tools use "/" separator (e.g., "bc-code-intelligence/set_workspace_info")
-  const mcpTools = allTools.filter(tool => tool.name.startsWith('bc-code-intelligence/'));
+  // MCP tools use "mcp_bc_code_intel_" prefix (e.g., "mcp_bc_code_intel_set_workspace_info")
+  const mcpTools = allTools.filter(tool => tool.name.startsWith(MCP_TOOL_PREFIX));
 
   // Build a mapping from potential model-transformed names back to original names
-  // Models may transform "bc-code-intelligence/set_workspace_info" to "bc-code-intelligence_setWorkspaceInfo"
   const nameMapping = new Map<string, string>();
 
   const buildNameMapping = (tools: vscode.LanguageModelToolInformation[]) => {
     for (const tool of tools) {
       // Map original name to itself
       nameMapping.set(tool.name, tool.name);
-
-      // Also map potential transformed variants back to original
-      // Transform: "bc-code-intelligence/set_workspace_info" -> "bc-code-intelligence_set_workspace_info"
-      const underscoreVariant = tool.name.replace('/', '_');
-      nameMapping.set(underscoreVariant, tool.name);
-
-      // Transform: snake_case to camelCase after the prefix
-      // "bc-code-intelligence_set_workspace_info" -> "bc-code-intelligence_setWorkspaceInfo"
-      const parts = underscoreVariant.split('_');
-      if (parts.length > 2) {
-        const prefix = parts.slice(0, 2).join('_'); // "bc-code-intelligence"
-        const rest = parts.slice(2); // ["set", "workspace", "info"]
-        const camelCase = rest[0] + rest.slice(1).map(p => p.charAt(0).toUpperCase() + p.slice(1)).join('');
-        const camelCaseVariant = `${prefix}_${camelCase}`;
-        nameMapping.set(camelCaseVariant, tool.name);
-      }
     }
   };
 
