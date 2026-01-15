@@ -5,11 +5,6 @@
     "description": "Alex Architect - Solution Design & Requirements Expert - Planning & Design"
   },
   {
-    "name": "Casey-Copilot",
-    "path": "./assets/agents/Casey-Copilot.agent.md",
-    "description": "Casey Copilot - AI-Enhanced Development Coach - AI Enhancement Specialist"
-  },
-  {
     "name": "Chris-Config",
     "path": "./assets/agents/Chris-Config.agent.md",
     "description": "Chris Config - MCP Configuration & Layer Management - Configuration & Infrastructure"
@@ -28,6 +23,11 @@
     "name": "Jordan-Bridge",
     "path": "./assets/agents/Jordan-Bridge.agent.md",
     "description": "Jordan Bridge - Integration & Extensibility Architect - Integration & Events"
+  },
+  {
+    "name": "Lena-Pipe",
+    "path": "./assets/agents/Lena-Pipe.agent.md",
+    "description": "Lena Pipe - Pipelines & CI/CD Engineer - Pipelines & CI/CD"
   },
   {
     "name": "Logan-Legacy",
@@ -78,5 +78,10 @@
     "name": "Uma-Ux",
     "path": "./assets/agents/Uma-Ux.agent.md",
     "description": "Uma UX - User Experience & Interface Design - User Experience Architect"
+  },
+  {
+    "name": "Victor-Versioning",
+    "path": "./assets/agents/Victor-Versioning.agent.md",
+    "description": "Victor Versioning - BC Version Migration Specialist - Version Migration"
   }
 ]
