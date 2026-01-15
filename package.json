@@ -129,10 +129,17 @@
         "isSticky": true
       },
       {
-        "id": "bc-code-intelligence.casey-copilot",
-        "name": "casey-copilot",
-        "fullName": "Casey Copilot",
-        "description": "AI-assisted development specialist",
+        "id": "bc-code-intelligence.lena-pipe",
+        "name": "lena-pipe",
+        "fullName": "Lena Pipe",
+        "description": "CI/CD pipelines and DevOps specialist",
+        "isSticky": true
+      },
+      {
+        "id": "bc-code-intelligence.victor-versioning",
+        "name": "victor-versioning",
+        "fullName": "Victor Versioning",
+        "description": "Versioning and dependency management specialist",
         "isSticky": true
       },
       {
@@ -490,9 +497,14 @@
         "description": "Documentation & knowledge - technical writing and help content"
       },
       {
-        "name": "Casey-Copilot",
-        "path": "./assets/agents/Casey-Copilot.agent.md",
-        "description": "AI-enhanced development - leveraging AI tools effectively in BC"
+        "name": "Lena-Pipe",
+        "path": "./assets/agents/Lena-Pipe.agent.md",
+        "description": "CI/CD pipelines & DevOps - AL-Go, ALOps, BcContainerHelper, and automation"
+      },
+      {
+        "name": "Victor-Versioning",
+        "path": "./assets/agents/Victor-Versioning.agent.md",
+        "description": "Version management & BC upgrades - migration paths and dependency management"
       },
       {
         "name": "Parker-Pragmatic",

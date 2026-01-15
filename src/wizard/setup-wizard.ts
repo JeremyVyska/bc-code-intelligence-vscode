@@ -548,7 +548,7 @@ List important components, tables, and codeunits here.
       'sam-coder', 'alex-architect', 'dean-debug', 'eva-errors',
       'quinn-tester', 'roger-reviewer', 'seth-security', 'jordan-bridge',
       'logan-legacy', 'uma-ux', 'morgan-market', 'maya-mentor',
-      'taylor-docs', 'casey-copilot', 'parker-pragmatic', 'chris-config'
+      'taylor-docs', 'lena-pipe', 'victor-versioning', 'parker-pragmatic', 'chris-config'
     ]);
 
     // Filter to get only custom specialists (from company/project layers)
