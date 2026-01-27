@@ -5,6 +5,16 @@ All notable changes to the BC Code Intelligence extension will be documented in 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.3] - 2026-01-27
+
+### Changed
+- Updated to bc-code-intelligence-mcp v1.7.3
+  - **FIXED** CLI crashing with JSON parse errors during initialization
+  - **IMPROVED** MCP handshake now completes in <1s (previously timing out)
+  - **IMPROVED** Heavy layer initialization moved to background after handshake
+  - Server accepts requests immediately without blocking
+  - Updated embedded knowledge content
+
 ## [0.2.0] - 2026-01-15
 
 ### Added
