@@ -2,7 +2,7 @@
   "name": "bc-code-intelligence",
   "displayName": "BC Code Intelligence",
   "description": "AI-powered Business Central development assistant with specialist personas",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "publisher": "jeremyvyska",
   "icon": "assets/bc-code-intel-logo.png",
   "engines": {
@@ -248,10 +248,11 @@
             "none",
             "token",
             "ssh",
-            "azure-cli"
+            "azure-cli",
+            "github-cli"
           ],
           "default": "none",
-          "description": "Authentication method for company layer",
+          "description": "Authentication method for company layer (azure-cli/github-cli require respective CLIs installed)",
           "scope": "application"
         },
         "bcCodeIntelligence.layers.company.tokenEnvVar": {
@@ -283,10 +284,11 @@
             "none",
             "token",
             "ssh",
-            "azure-cli"
+            "azure-cli",
+            "github-cli"
           ],
           "default": "none",
-          "description": "Authentication method for team layer",
+          "description": "Authentication method for team layer (azure-cli/github-cli require respective CLIs installed)",
           "scope": "resource"
         },
         "bcCodeIntelligence.layers.project.enabled": {

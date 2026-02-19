@@ -2,9 +2,9 @@
  * Configuration types for BC Code Intelligence extension
  */
 
-export type AuthMethod = 'none' | 'token' | 'ssh' | 'azure-cli';
-export type CacheStrategy = 'none' | 'minimal' | 'moderate' | 'aggressive';
-export type LogLevel = 'error' | 'warn' | 'info' | 'debug';
+export type AuthMethod = "none" | "token" | "ssh" | "azure-cli" | "github-cli";
+export type CacheStrategy = "none" | "minimal" | "moderate" | "aggressive";
+export type LogLevel = "error" | "warn" | "info" | "debug";
 
 export interface LayerConfig {
   enabled: boolean;
