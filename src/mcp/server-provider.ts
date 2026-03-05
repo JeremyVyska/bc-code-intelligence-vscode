@@ -16,6 +16,8 @@ export function registerMcpServerProvider(context: vscode.ExtensionContext): vsc
   const provider: vscode.McpServerDefinitionProvider<vscode.McpServerDefinition> = {
     provideMcpServerDefinitions: () => {
       const config = getExtensionConfig();
+      console.error('[MCP Provider] Retrieved config:', JSON.stringify(config.layers.company, null, 2));
+      
       const mcpServerPath = path.join(
         context.extensionPath,
         'bc-code-intelligence-mcp',

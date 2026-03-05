@@ -83,11 +83,16 @@ export function configToMcpEnv(
 ): Record<string, string> {
   const env: Record<string, string> = {};
 
+  console.error('[config-bridge] Converting config to MCP env vars');
+  console.error(`[config-bridge] Company layer enabled: ${config.layers.company.enabled}, url: ${config.layers.company.url}`);
+
   // Layer configuration - use BC_CODE_INTEL prefix to match MCP expectations
   if (config.layers.company.enabled && config.layers.company.url) {
     env["BC_CODE_INTEL_COMPANY_KNOWLEDGE_URL"] = config.layers.company.url;
     env["BC_CODE_INTEL_COMPANY_KNOWLEDGE_BRANCH"] =
       config.layers.company.branch || "main";
+    console.error(`[config-bridge] Set BC_CODE_INTEL_COMPANY_KNOWLEDGE_URL = ${env["BC_CODE_INTEL_COMPANY_KNOWLEDGE_URL"]}`);
+    console.error(`[config-bridge] Set BC_CODE_INTEL_COMPANY_KNOWLEDGE_BRANCH = ${env["BC_CODE_INTEL_COMPANY_KNOWLEDGE_BRANCH"]}`);
 
     // Handle authentication - read actual token from environment if needed
     if (
@@ -97,14 +102,20 @@ export function configToMcpEnv(
       const tokenValue = process.env[config.layers.company.tokenEnvVar];
       if (tokenValue) {
         env["BC_CODE_INTEL_COMPANY_KNOWLEDGE_TOKEN"] = tokenValue;
+        console.error(`[config-bridge] Set BC_CODE_INTEL_COMPANY_KNOWLEDGE_TOKEN from ${config.layers.company.tokenEnvVar}`);
       }
     } else if (config.layers.company.auth === "azure-cli") {
       env["BC_CODE_INTEL_COMPANY_KNOWLEDGE_AUTH_TYPE"] = "az_cli";
+      console.error(`[config-bridge] Set BC_CODE_INTEL_COMPANY_KNOWLEDGE_AUTH_TYPE = az_cli`);
     } else if (config.layers.company.auth === "github-cli") {
       env["BC_CODE_INTEL_COMPANY_KNOWLEDGE_AUTH_TYPE"] = "gh_cli";
+      console.error(`[config-bridge] Set BC_CODE_INTEL_COMPANY_KNOWLEDGE_AUTH_TYPE = gh_cli`);
     } else if (config.layers.company.auth === "ssh") {
       env["BC_CODE_INTEL_COMPANY_KNOWLEDGE_AUTH_TYPE"] = "ssh";
+      console.error(`[config-bridge] Set BC_CODE_INTEL_COMPANY_KNOWLEDGE_AUTH_TYPE = ssh`);
     }
+  } else {
+    console.error(`[config-bridge] Skipping company layer - enabled: ${config.layers.company.enabled}, url: ${config.layers.company.url}`);
   }
 
   if (config.layers.team.enabled && config.layers.team.url) {
@@ -145,6 +156,8 @@ export function configToMcpEnv(
     env["BC_CODE_INTEL_ENABLE_DIAGNOSTICS"] = "true";
   }
   env["BC_CODE_INTEL_LOG_LEVEL"] = config.developer.logLevel;
+
+  console.error('[config-bridge] Final environment variables:', Object.keys(env).join(', '));
 
   return env;
 }
