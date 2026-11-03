@@ -5,6 +5,18 @@ All notable changes to the BC Code Intelligence extension will be documented in 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.9] - 2026-11-03
+
+### Fixed
+- Inline "Activate Specialist" button in the sidebar sent `@[object Object]` to chat (#10)
+
+### Changed
+- Updated to bc-code-intelligence-mcp v1.7.7
+  - **FIXED** Company/team git layers failing to clone or pull under VS Code (simple-git environment guards)
+  - **FIXED** `--version` / `--health-check` flags crashing
+  - **SECURITY** Dependency updates resolving npm audit advisories (zod 4, simple-git 4, MCP SDK 1.32)
+- Security updates for extension dependencies (MCP SDK 1.32, esbuild 0.28)
+
 ## [0.2.7] - 2026-03-05
 
 ### Changed
