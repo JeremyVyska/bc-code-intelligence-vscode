@@ -38,7 +38,13 @@ export function registerCommands(
   disposables.push(
     vscode.commands.registerCommand(
       'bcCodeIntelligence.activateSpecialist',
-      async (specialistId: string) => {
+      // Row click passes the id via TreeItem.command.arguments; the inline
+      // view/item/context button passes the tree item itself. (#10)
+      async (arg: string | { specialist?: { specialist_id?: string } }) => {
+        const specialistId = typeof arg === 'string' ? arg : arg?.specialist?.specialist_id;
+        if (!specialistId) {
+          return;
+        }
         await vscode.commands.executeCommand('workbench.action.chat.open', {
           query: `@${specialistId} `,
         });
